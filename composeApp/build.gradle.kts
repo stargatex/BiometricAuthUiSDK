@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.swiftklib)
 }
 
 kotlin {
@@ -16,7 +17,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -26,6 +27,11 @@ kotlin {
             baseName = "ComposeApp"
             isStatic = true
         }
+
+        iosTarget.compilations["main"].cinterops {
+            create("biometricAuthHelper")
+        }
+
     }
     
     sourceSets {
@@ -82,6 +88,13 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+
+swiftklib {
+    create("biometricAuthHelper") {
+        path = file("../iosApp/iosApp/Biometric")
+        packageName("com.stargatex.mobile.lib.biometricauth.swift")
     }
 }
 

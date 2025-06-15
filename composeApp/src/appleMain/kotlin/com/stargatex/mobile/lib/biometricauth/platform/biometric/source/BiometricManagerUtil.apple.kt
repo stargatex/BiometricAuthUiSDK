@@ -9,6 +9,6 @@ actual class BiometricManagerUtil {
     }
 
     actual suspend fun canAuthenticate(): BiometricAvailabilityResultDto {
-        return BiometricAuthResultDto.Available
+        return BiometricAvailabilityResultDto.Available
     }
 }

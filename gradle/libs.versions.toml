@@ -16,6 +16,7 @@ junit = "4.13.2"
 koinCompose = "4.1.0"
 kotlin = "2.1.21"
 kotlinxCoroutinesCore = "1.10.2"
+swiftklib = "0.6.4"
 
 [libraries]
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -42,3 +43,4 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+swiftklib = { id = "io.github.ttypic.swiftklib", version.ref = "swiftklib" }
