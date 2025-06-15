@@ -1,47 +1,32 @@
 package com.stargatex.mobile.lib.biometricauth
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
+import com.stargatex.mobile.lib.biometricauth.di.appModule
+import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.dsl.KoinConfiguration
 
+/**
+ * @author Lahiru Jayawickrama (stargatex)
+ * @version 1.0.0
+ */
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 @Preview
-fun App() {
+fun App(platformContextProvider: PlatformContextProvider) {
     KoinMultiplatformApplication(config = KoinConfiguration {
-
+        modules(appModule(platformContextProvider))
     }) {
-        Base()
+        MaterialTheme { Base() }
     }
 }
 
 @Composable
-private fun Base() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-        }
-    }
+private fun Base(
+) {
+    BiometricVerifyScreen()
 }
