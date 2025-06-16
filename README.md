@@ -1,14 +1,7 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# BiometricAuth Project
 
-* `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+A Kotlin Multiplatform project demonstrating/providing biometric authentication capabilities. This project includes a core SDK (`biometricLockSdk`) for handling biometric authentication logic across different platforms.
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Overview
 
-
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+This project provides a secure and easy-to-use Kotlin Multiplatform SDK for integrating biometric authentication (fingerprint, face ID, etc.) into Android and iOS applications. It also includes a sample application showcasing the SDK's capabilities.
