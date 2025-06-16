@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -95,6 +94,7 @@ swiftklib {
     create("biometricAuthHelper") {
         path = file("../iosApp/iosApp/Biometric")
         packageName("com.stargatex.mobile.lib.biometricauth.swift")
+        minIos = 17
     }
 }
 

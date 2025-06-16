@@ -25,13 +25,13 @@ import LocalAuthentication
 }
 
 @objc public class BiometricAuthHelper: NSObject {
-
+    
     @objc public func checkAvailability() -> BiometricAvailability {
         let context = LAContext()
         var error: NSError?
-
-        let canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
-
+        
+        let canEvaluate = context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
+        
         if canEvaluate {
             return .available
         } else if let err = error {
@@ -46,26 +46,28 @@ import LocalAuthentication
         }
         return .unknown
     }
-
+    
     @objc public func authenticate(reason: String, completion: @escaping (BiometricAuthResult, String?) -> Void) {
         let context = LAContext()
-        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, error in
+        context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, error in
             DispatchQueue.main.async {
                 if success {
                     completion(.success, nil)
-                } else if let err = error as? LAError {
-                    switch err.code {
+                } else if let laError = error as? LAError {
+                    switch laError.code {
                     case .userCancel:
                         completion(.canceled, nil)
+                    case .authenticationFailed:
+                        completion(.failed, nil)
                     case .userFallback:
-                        completion(.fallback, nil)
+                        completion(.failed, "Fallback invoked but authentication failed")
                     case .biometryLockout:
                         completion(.attemptExhausted, nil)
                     default:
-                        completion(.error, err.localizedDescription)
+                        completion(.error, laError.localizedDescription)
                     }
                 } else {
-                    completion(.failed, nil)
+                    completion(.error, error?.localizedDescription ?? "Unknown error")
                 }
             }
         }
