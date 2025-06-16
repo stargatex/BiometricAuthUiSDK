@@ -92,7 +92,7 @@ android {
 
 swiftklib {
     create("biometricAuthHelper") {
-        path = file("../iosApp/iosApp/Biometric")
+        path = file("src/appleMain/swift/Biometric")
         packageName("com.stargatex.mobile.lib.biometricauth.swift")
         minIos = 17
     }
