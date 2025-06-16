@@ -19,9 +19,9 @@ actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
 
     actual suspend fun authenticate(): BiometricAuthResultDto {
         this.preparePrompt(
-            title = "Biometric Authentication",
-            subtitle = "Log in using your biometric credential",
-            description = "Place your finger on the sensor or use face recognition"
+            title = "App Lock",
+            subtitle = "Unlock the App using your biometric or device credential",
+            description = "Enter your PIN or Place your finger on the sensor or use face recognition"
         )
         return suspendCancellableCoroutine { continuation ->
             var biometricPrompt =
@@ -49,7 +49,6 @@ actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
                         }
 
                         override fun onAuthenticationFailed() {
-                            // Optional: trigger retry visuals if needed
                             continuation.resume(BiometricAuthResultDto.Failed)
                         }
                     })
@@ -77,8 +76,8 @@ actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
             .setTitle(title)
             .setSubtitle(subtitle)
             .setDescription(description)
-            .setNegativeButtonText("Cancel")
-            .setAllowedAuthenticators(BIOMETRIC_STRONG)
+            //.setNegativeButtonText("Cancel")
+            .setAllowedAuthenticators(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
             .build()
         return this
     }

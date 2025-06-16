@@ -17,16 +17,42 @@ import org.koin.dsl.KoinConfiguration
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 @Preview
-fun App(platformContextProvider: PlatformContextProvider) {
+fun App(
+    platformContextProvider: PlatformContextProvider,
+    shouldCheckAvailability: Boolean = true,
+    onAuthSuccess: () -> Unit = {},
+    onNoEnrollment: () -> Unit = {},
+    onFallback: () -> Unit = {},
+    onAuthFailure: (String) -> Unit = {}
+) {
     KoinMultiplatformApplication(config = KoinConfiguration {
         modules(appModule(platformContextProvider))
     }) {
-        MaterialTheme { Base() }
+        MaterialTheme {
+            Base(
+                shouldCheckAvailability = shouldCheckAvailability,
+                onAuthSuccess = onAuthSuccess,
+                onNoEnrollment = onNoEnrollment,
+                onFallback = onFallback,
+                onAuthFailure = onAuthFailure
+            )
+        }
     }
 }
 
 @Composable
 private fun Base(
+    shouldCheckAvailability: Boolean = true,
+    onAuthSuccess: () -> Unit = {},
+    onNoEnrollment: () -> Unit = {},
+    onFallback: () -> Unit = {},
+    onAuthFailure: (String) -> Unit = {}
 ) {
-    BiometricVerifyScreen()
+    BiometricVerifyScreen(
+        shouldCheckAvailability = shouldCheckAvailability,
+        onAuthSuccess = onAuthSuccess,
+        onNoEnrollment = onNoEnrollment,
+        onFallback = onFallback,
+        onAuthFailure = onAuthFailure
+    )
 }
