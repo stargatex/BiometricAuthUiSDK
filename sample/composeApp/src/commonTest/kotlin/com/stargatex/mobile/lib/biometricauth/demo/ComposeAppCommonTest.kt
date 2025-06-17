@@ -1,4 +1,4 @@
-package com.stargatex.mobile.lib.biometricauth
+package com.stargatex.mobile.lib.biometricauth.demo
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

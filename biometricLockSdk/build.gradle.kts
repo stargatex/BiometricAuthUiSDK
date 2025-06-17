@@ -7,10 +7,12 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.swiftklib)
+    id("maven-publish")
 }
 
 kotlin {
     androidTarget {
+        publishLibraryVariants("release")
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
@@ -98,3 +100,23 @@ dependencies {
     debugImplementation(compose.uiTooling)
 }
 
+publishing {
+    publications {
+        withType<MavenPublication>().configureEach {
+            groupId = "com.stargatex.mobile.lib"
+            version = "0.1.1"
+            artifactId = if (name == "kotlinMultiplatform") {
+                "bimetriclock"
+            } else {
+                "bimetriclock-$name"
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "localMaven"
+            url = uri(System.getProperty("user.home") + "/.m2/repository")
+        }
+    }
+}

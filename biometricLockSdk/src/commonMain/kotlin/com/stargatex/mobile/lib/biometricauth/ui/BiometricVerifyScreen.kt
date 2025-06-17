@@ -27,7 +27,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun BiometricVerifyScreen(
-    verifyViewModel: BiometricVerifyViewModel = koinViewModel(),
+    verifyViewModel: BiometricVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
     onAuthSuccess: () -> Unit = {},
     onNoEnrollment: () -> Unit = {},

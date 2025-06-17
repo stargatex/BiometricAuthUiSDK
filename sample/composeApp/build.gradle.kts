@@ -36,7 +36,7 @@ kotlin {
             implementation(libs.androidx.biometric)
         }
         commonMain.dependencies {
-            implementation(project(":biometricLockSdk"))
+            implementation("com.stargatex.mobile.lib:bimetriclock:0.1.0")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -60,11 +60,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.stargatex.mobile.lib.biometricauth"
+    namespace = "com.stargatex.mobile.lib.biometricauth.demo"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.stargatex.mobile.lib.biometricauth"
+        applicationId = "com.stargatex.mobile.lib.biometricauth.demo"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

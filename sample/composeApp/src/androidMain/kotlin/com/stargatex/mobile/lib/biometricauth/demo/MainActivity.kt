@@ -1,4 +1,4 @@
-package com.stargatex.mobile.lib.biometricauth
+package com.stargatex.mobile.lib.biometricauth.demo
 
 import android.content.Intent
 import android.os.Build

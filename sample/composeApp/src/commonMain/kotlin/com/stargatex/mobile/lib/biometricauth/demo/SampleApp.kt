@@ -1,6 +1,7 @@
-package com.stargatex.mobile.lib.biometricauth
+package com.stargatex.mobile.lib.biometricauth.demo
 
 import androidx.compose.runtime.Composable
+import com.stargatex.mobile.lib.biometricauth.App
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI

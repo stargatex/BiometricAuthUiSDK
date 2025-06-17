@@ -1,14 +1,13 @@
 package com.stargatex.mobile.lib.biometricauth
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import com.stargatex.mobile.lib.biometricauth.di.BiometricAuthLibDI
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
-import com.stargatex.mobile.lib.biometricauth.di.appModule
 import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyScreen
+import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyViewModel
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinMultiplatformApplication
 import org.koin.core.annotation.KoinExperimentalAPI
-import org.koin.dsl.KoinConfiguration
 
 /**
  * @author Lahiru Jayawickrama (stargatex)
@@ -25,23 +24,29 @@ fun App(
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
-    KoinMultiplatformApplication(config = KoinConfiguration {
-        modules(appModule(platformContextProvider))
-    }) {
-        MaterialTheme {
-            Base(
-                shouldCheckAvailability = shouldCheckAvailability,
-                onAuthSuccess = onAuthSuccess,
-                onNoEnrollment = onNoEnrollment,
-                onFallback = onFallback,
-                onAuthFailure = onAuthFailure
-            )
+    BiometricAuthLibDI.start(platformContextProvider)
+
+    Base(
+        verifyViewModel = BiometricAuthLibDI.getKoin().get(),
+        shouldCheckAvailability = shouldCheckAvailability,
+        onAuthSuccess = onAuthSuccess,
+        onNoEnrollment = onNoEnrollment,
+        onFallback = onFallback,
+        onAuthFailure = onAuthFailure
+    )
+
+    DisposableEffect(Unit) {
+        onDispose {
+            BiometricAuthLibDI.stop()
+
         }
     }
 }
 
+
 @Composable
 private fun Base(
+    verifyViewModel: BiometricVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
     onAuthSuccess: () -> Unit = {},
     onNoEnrollment: () -> Unit = {},
@@ -49,6 +54,7 @@ private fun Base(
     onAuthFailure: (String) -> Unit = {}
 ) {
     BiometricVerifyScreen(
+        verifyViewModel = verifyViewModel,
         shouldCheckAvailability = shouldCheckAvailability,
         onAuthSuccess = onAuthSuccess,
         onNoEnrollment = onNoEnrollment,

@@ -11,7 +11,7 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun appModule(platformContextProvider: PlatformContextProvider) = module {
+fun libMainModule(platformContextProvider: PlatformContextProvider) = module {
     includes(platformModule(platformContextProvider), dataModule(), domainModule(), uiModule())
 }
 
