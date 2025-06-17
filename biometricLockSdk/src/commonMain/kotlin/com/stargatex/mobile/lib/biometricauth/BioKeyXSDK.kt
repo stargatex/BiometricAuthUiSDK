@@ -4,8 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import com.stargatex.mobile.lib.biometricauth.di.BiometricAuthLibDI
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPromptConfig
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
 import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyScreen
 import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyViewModel
+import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextConfig
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -19,6 +22,10 @@ interface BioKeyXFacade {
     fun Compose(
         platformContextProvider: PlatformContextProvider,
         shouldCheckAvailability: Boolean = true,
+        lockConfig: LockConfig = LockConfig(
+            BiometricPromptConfig.default()
+        ),
+        uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig.default(),
         onAuthSuccess: () -> Unit = {},
         onNoEnrollment: () -> Unit = {},
         onFallback: () -> Unit = {},
@@ -31,6 +38,8 @@ object BioKeyX : BioKeyXFacade {
     override fun Compose(
         platformContextProvider: PlatformContextProvider,
         shouldCheckAvailability: Boolean,
+        lockConfig: LockConfig,
+        uiTextConfig: BiometricUiTextConfig,
         onAuthSuccess: () -> Unit,
         onNoEnrollment: () -> Unit,
         onFallback: () -> Unit,
@@ -38,6 +47,8 @@ object BioKeyX : BioKeyXFacade {
     ) = App(
         platformContextProvider,
         shouldCheckAvailability,
+        lockConfig,
+        uiTextConfig,
         onAuthSuccess,
         onNoEnrollment,
         onFallback,
@@ -52,6 +63,8 @@ object BioKeyX : BioKeyXFacade {
 fun App(
     platformContextProvider: PlatformContextProvider,
     shouldCheckAvailability: Boolean = true,
+    lockConfig: LockConfig,
+    uiTextConfig: BiometricUiTextConfig,
     onAuthSuccess: () -> Unit = {},
     onNoEnrollment: () -> Unit = {},
     onFallback: () -> Unit = {},
@@ -62,6 +75,8 @@ fun App(
     Base(
         verifyViewModel = BiometricAuthLibDI.getKoin().get(),
         shouldCheckAvailability = shouldCheckAvailability,
+        lockConfig = lockConfig,
+        uiTextConfig = uiTextConfig,
         onAuthSuccess = onAuthSuccess,
         onNoEnrollment = onNoEnrollment,
         onFallback = onFallback,
@@ -71,7 +86,6 @@ fun App(
     DisposableEffect(Unit) {
         onDispose {
             BiometricAuthLibDI.stop()
-
         }
     }
 }
@@ -81,6 +95,8 @@ fun App(
 private fun Base(
     verifyViewModel: BiometricVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
+    lockConfig: LockConfig,
+    uiTextConfig: BiometricUiTextConfig,
     onAuthSuccess: () -> Unit = {},
     onNoEnrollment: () -> Unit = {},
     onFallback: () -> Unit = {},
@@ -89,6 +105,8 @@ private fun Base(
     BiometricVerifyScreen(
         verifyViewModel = verifyViewModel,
         shouldCheckAvailability = shouldCheckAvailability,
+        lockConfig = lockConfig,
+        uiTextConfig = uiTextConfig,
         onAuthSuccess = onAuthSuccess,
         onNoEnrollment = onNoEnrollment,
         onFallback = onFallback,

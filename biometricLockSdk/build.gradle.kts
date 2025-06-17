@@ -65,6 +65,12 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = false
+    packageOfResClass = "com.stargatex.mobile.lib.bimetriclock.resources"
+    generateResClass = auto
+}
+
 android {
     namespace = "com.stargatex.mobile.lib.biometricauth"
     compileSdk = libs.versions.android.compileSdk.get().toInt()

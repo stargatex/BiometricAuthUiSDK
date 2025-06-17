@@ -18,7 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricAuthResult
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricAvailabilityResult
-import org.koin.compose.viewmodel.koinViewModel
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPromptConfig
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
+import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextConfig
 
 /**
  * @author Lahiru Jayawickrama (stargatex)
@@ -29,6 +31,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun BiometricVerifyScreen(
     verifyViewModel: BiometricVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
+    lockConfig: LockConfig = LockConfig(BiometricPromptConfig.default()),
+    uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig.default(),
     onAuthSuccess: () -> Unit = {},
     onNoEnrollment: () -> Unit = {},
     onFallback: () -> Unit = {},
@@ -47,63 +51,58 @@ fun BiometricVerifyScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Biometric Authentication", style = MaterialTheme.typography.headlineMedium)
+        Text(uiTextConfig.screenTitle, style = MaterialTheme.typography.headlineMedium)
 
         Spacer(Modifier.height(16.dp))
 
         when (availability) {
             null -> CircularProgressIndicator()
             BiometricAvailabilityResult.Available -> {
-                Text("Biometric is available.")
+                Text(uiTextConfig.available)
                 LaunchedEffect(availability) {
-                    verifyViewModel.startAuthentication()
+                    verifyViewModel.startAuthentication(lockConfig)
                 }
             }
 
             BiometricAvailabilityResult.NoEnrollment -> {
-                Text("No biometric enrolled.")
-                LaunchedEffect(availability) {
-                    onNoEnrollment()
-                }
+                Text(uiTextConfig.noEnrollment)
+                LaunchedEffect(availability) { onNoEnrollment() }
             }
-            BiometricAvailabilityResult.HardwareUnavailable -> Text("Hardware unavailable.")
+
+            BiometricAvailabilityResult.HardwareUnavailable -> {
+                Text(uiTextConfig.hardwareUnavailable)
+            }
+
             BiometricAvailabilityResult.NoHardware -> {
-                Text("No biometric hardware found.")
-                LaunchedEffect(availability) {
-                    onFallback()
-                }
+                Text(uiTextConfig.noHardware)
+                LaunchedEffect(availability) { onFallback() }
             }
-            BiometricAvailabilityResult.Unknown -> Text("Biometric availability unknown.")
+
+            BiometricAvailabilityResult.Unknown -> Text(uiTextConfig.unknown)
         }
 
         Spacer(Modifier.height(24.dp))
 
         when (authenticationResult) {
             is BiometricAuthResult.Success -> {
-                Text("Authentication successful.")
+                Text(uiTextConfig.authSuccess)
                 LaunchedEffect(authenticationResult) { onAuthSuccess() }
             }
 
             is BiometricAuthResult.Failed -> {
-                Text("Authentication failed.")
-                LaunchedEffect(authenticationResult) { onAuthFailure("Authentication failed.") }
+                Text(uiTextConfig.authFailed)
+                LaunchedEffect(authenticationResult) { onAuthFailure(uiTextConfig.authFailed) }
             }
 
             is BiometricAuthResult.Error -> {
                 val error = (authenticationResult as BiometricAuthResult.Error).message
-                Text("Error: $error")
+                Text("${uiTextConfig.errorPrefix}: $error")
                 LaunchedEffect(error) { onAuthFailure(error) }
             }
 
-            BiometricAuthResult.NegativeButtonClick -> {
-                Text("Authentication cancelled.")
-            }
-
-            BiometricAuthResult.AttemptExhausted -> {
-                Text("Too many failed attempts.")
-            }
-
-            null -> CircularProgressIndicator()
+            BiometricAuthResult.NegativeButtonClick -> Text(uiTextConfig.authCancelled)
+            BiometricAuthResult.AttemptExhausted -> Text(uiTextConfig.authExhausted)
+            null -> {}
         }
     }
 

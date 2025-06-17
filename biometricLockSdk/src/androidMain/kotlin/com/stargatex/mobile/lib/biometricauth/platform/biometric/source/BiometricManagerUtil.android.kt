@@ -8,6 +8,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.BiometricAuthResultDto
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.BiometricAvailabilityResultDto
+import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.LockConfigDto
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -17,12 +18,14 @@ actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
     private val executor = ContextCompat.getMainExecutor(activity)
 
 
-    actual suspend fun authenticate(): BiometricAuthResultDto {
+    actual suspend fun authenticate(lockConfigDto: LockConfigDto): BiometricAuthResultDto {
+
         this.preparePrompt(
-            title = "App Lock",
-            subtitle = "Unlock the App using your biometric or device credential",
-            description = "Enter your PIN or Place your finger on the sensor or use face recognition"
+            lockConfigDto.biometricPromptConfigDto.title,
+            lockConfigDto.biometricPromptConfigDto.subtitle,
+            lockConfigDto.biometricPromptConfigDto.description
         )
+
         return suspendCancellableCoroutine { continuation ->
             var biometricPrompt =
                 BiometricPrompt(

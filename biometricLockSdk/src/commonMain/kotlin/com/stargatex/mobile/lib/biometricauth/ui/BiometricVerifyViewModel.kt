@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricAuthResult
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricAvailabilityResult
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.usecase.BiometricAuthUseCase
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.usecase.BiometricAvailabilityUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,9 +31,9 @@ class BiometricVerifyViewModel(
         }
     }
 
-    fun startAuthentication() {
+    fun startAuthentication(lockConfig: LockConfig) {
         viewModelScope.launch {
-            _authResult.value = biometricAuthUseCase()
+            _authResult.value = biometricAuthUseCase(lockConfig)
         }
     }
 }
