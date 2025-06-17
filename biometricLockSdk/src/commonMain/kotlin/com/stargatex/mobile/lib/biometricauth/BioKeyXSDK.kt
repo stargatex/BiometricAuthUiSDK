@@ -13,6 +13,39 @@ import org.koin.core.annotation.KoinExperimentalAPI
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
+
+interface BioKeyXFacade {
+    @Composable
+    fun Compose(
+        platformContextProvider: PlatformContextProvider,
+        shouldCheckAvailability: Boolean = true,
+        onAuthSuccess: () -> Unit = {},
+        onNoEnrollment: () -> Unit = {},
+        onFallback: () -> Unit = {},
+        onAuthFailure: (String) -> Unit = {}
+    )
+}
+
+object BioKeyX : BioKeyXFacade {
+    @Composable
+    override fun Compose(
+        platformContextProvider: PlatformContextProvider,
+        shouldCheckAvailability: Boolean,
+        onAuthSuccess: () -> Unit,
+        onNoEnrollment: () -> Unit,
+        onFallback: () -> Unit,
+        onAuthFailure: (String) -> Unit
+    ) = App(
+        platformContextProvider,
+        shouldCheckAvailability,
+        onAuthSuccess,
+        onNoEnrollment,
+        onFallback,
+        onAuthFailure
+    )
+}
+
+
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 @Preview
