@@ -1,0 +1,17 @@
+<resources>
+    <string name="biometric_lib_name">BioKeyX</string>
+    <string name="biometric_title">App Lock</string>
+    <string name="biometric_subtitle">Unlock the app using your biometrics or device credentials</string>
+    <string name="biometric_description">Enter your PIN, place your finger on the sensor, or use face recognition</string>
+    <string name="biometric_screen_title">Biometric Authentication</string>
+    <string name="biometric_available">Biometric is available.</string>
+    <string name="biometric_no_enrollment">No biometric enrolled.</string>
+    <string name="biometric_hw_unavailable">Hardware unavailable.</string>
+    <string name="biometric_no_hw">No biometric hardware found.</string>
+    <string name="biometric_unknown">Biometric availability unknown.</string>
+    <string name="biometric_success">Authentication successful.</string>
+    <string name="biometric_failed">Authentication failed.</string>
+    <string name="biometric_cancelled">Authentication cancelled.</string>
+    <string name="biometric_exhausted">Too many failed attempts.</string>
+    <string name="biometric_error_prefix">Error</string>
+</resources>

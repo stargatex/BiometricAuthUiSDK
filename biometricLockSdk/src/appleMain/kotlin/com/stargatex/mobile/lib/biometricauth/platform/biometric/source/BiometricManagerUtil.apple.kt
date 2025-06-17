@@ -2,6 +2,7 @@ package com.stargatex.mobile.lib.biometricauth.platform.biometric.source
 
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.BiometricAuthResultDto
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.BiometricAvailabilityResultDto
+import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.LockConfigDto
 import com.stargatex.mobile.lib.biometricauth.swift.BiometricAuthHelper
 import com.stargatex.mobile.lib.biometricauth.swift.BiometricAuthResultAttemptExhausted
 import com.stargatex.mobile.lib.biometricauth.swift.BiometricAuthResultCanceled
@@ -20,7 +21,7 @@ import kotlin.coroutines.resume
 actual class BiometricManagerUtil(
     private val biometricAuthHelper: BiometricAuthHelper
 ) {
-    actual suspend fun authenticate(): BiometricAuthResultDto =
+    actual suspend fun authenticate(lockConfigDto: LockConfigDto): BiometricAuthResultDto =
         suspendCancellableCoroutine { cont ->
             biometricAuthHelper.authenticateWithReason("Authenticate with biometrics") { result, errorMessage ->
                 val authResult = when (result) {
