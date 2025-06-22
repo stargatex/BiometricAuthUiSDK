@@ -8,7 +8,7 @@ import com.stargatex.mobile.lib.pinauth.domain.model.LockConfig
 import com.stargatex.mobile.lib.pinauth.domain.model.PinPromptConfig
 import com.stargatex.mobile.lib.pinauth.ui.PINVerifyViewModel
 import com.stargatex.mobile.lib.pinauth.ui.PinVerifyScreen
-import com.stargatex.mobile.lib.pinauth.ui.model.config.BiometricUiTextConfig
+import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -17,7 +17,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
  * @version 1.0.0
  */
 
-interface BioKeyXFacade {
+interface PINKeyXFacade {
     @Composable
     fun Compose(
         platformContextProvider: PlatformContextProvider,
@@ -25,20 +25,20 @@ interface BioKeyXFacade {
         lockConfig: LockConfig = LockConfig(
             PinPromptConfig.default()
         ),
-        uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig.default(),
+        uiTextConfig: PinUiTextConfig = PinUiTextConfig.default(),
         onAuthSuccess: () -> Unit = {},
         onFallback: () -> Unit = {},
         onAuthFailure: (String) -> Unit = {}
     )
 }
 
-object BioKeyX : BioKeyXFacade {
+object PINKeyX : PINKeyXFacade {
     @Composable
     override fun Compose(
         platformContextProvider: PlatformContextProvider,
         shouldCheckAvailability: Boolean,
         lockConfig: LockConfig,
-        uiTextConfig: BiometricUiTextConfig,
+        uiTextConfig: PinUiTextConfig,
         onAuthSuccess: () -> Unit,
         onFallback: () -> Unit,
         onAuthFailure: (String) -> Unit
@@ -61,7 +61,7 @@ internal fun App(
     platformContextProvider: PlatformContextProvider,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig,
-    uiTextConfig: BiometricUiTextConfig,
+    uiTextConfig: PinUiTextConfig,
     onAuthSuccess: () -> Unit = {},
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
@@ -91,7 +91,7 @@ private fun Base(
     verifyViewModel: PINVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig,
-    uiTextConfig: BiometricUiTextConfig,
+    uiTextConfig: PinUiTextConfig,
     onAuthSuccess: () -> Unit = {},
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}

@@ -1,5 +1,6 @@
 package com.stargatex.mobile.lib.pinauth.platform.store.di
 
+import com.stargatex.mobile.lib.pinauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.platform.store.pref.PrefStore
 import com.stargatex.mobile.lib.pinauth.platform.store.pref.SecurePrefStore
 import org.koin.core.module.Module
@@ -10,8 +11,8 @@ import org.koin.dsl.module
  * @version 1.0
  */
 
-fun userManagerModule() = module {
-    includes(platformPrefStoreModule(), prefStoreModule())
+fun userManagerModule(platformContextProvider: PlatformContextProvider) = module {
+    includes(platformPrefStoreModule(platformContextProvider), prefStoreModule())
 
 }
 
@@ -21,4 +22,4 @@ fun prefStoreModule() = module {
 
 expect class KMMContext
 
-expect fun platformPrefStoreModule(): Module
+expect fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider): Module

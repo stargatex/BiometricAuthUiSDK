@@ -1,6 +1,7 @@
 package com.stargatex.mobile.lib.pinauth.platform.store.di
 
 import com.liftric.kvault.KVault
+import com.stargatex.mobile.lib.pinauth.di.PlatformContextProvider
 import org.koin.dsl.module
 import platform.darwin.NSObject
 
@@ -11,6 +12,6 @@ import platform.darwin.NSObject
 
 actual typealias KMMContext = NSObject
 
-actual fun platformPrefStoreModule() = module {
+actual fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider) = module {
     single<KVault> { KVault() }
 }

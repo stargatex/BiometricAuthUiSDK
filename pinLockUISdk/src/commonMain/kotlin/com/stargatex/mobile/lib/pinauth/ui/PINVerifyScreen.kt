@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.stargatex.mobile.lib.pinauth.domain.model.LockConfig
 import com.stargatex.mobile.lib.pinauth.domain.model.PinPromptConfig
-import com.stargatex.mobile.lib.pinauth.ui.model.config.BiometricUiTextConfig
+import com.stargatex.mobile.lib.pinauth.ui.component.NumericKeyPad
+import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
 import com.stargatex.mobile.lib.pinauth.ui.model.state.PinScreenState
 import com.stargatex.mobile.lib.pinauth.ui.model.state.PinUiEvent
 import com.stargatex.mobile.lib.pinlock.resources.Res
@@ -40,18 +42,33 @@ internal fun PinVerifyScreen(
     verifyViewModel: PINVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig = LockConfig(PinPromptConfig.default()),
-    uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig.default(),
+    uiTextConfig: PinUiTextConfig = PinUiTextConfig.default(),
     onUnlockSuccess: () -> Unit = {},
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
     val screenUiState by verifyViewModel.pinScreenUiState.collectAsState()
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var pin by remember { mutableStateOf("") }
+
+    fun updatePin(newPin: String) {
+        if (newPin.length <= 4) {
+            pin = newPin
+        }
+        if (pin.length == 4) {
+            verifyViewModel.afterPinEntered(pin)
+            pin = ""
+        }
+    }
+
     LaunchedEffect(Unit) {
         verifyViewModel.pinUiEvents.collect { event ->
             when (event) {
                 is PinUiEvent.Error -> errorMessage = event.message
-                is PinUiEvent.Success -> onUnlockSuccess()
+                is PinUiEvent.Success -> {
+                    onUnlockSuccess()
+                    errorMessage = "onUnlockSuccess"
+                }
             }
         }
     }
@@ -68,13 +85,28 @@ internal fun PinVerifyScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(uiTextConfig.screenTitle, style = MaterialTheme.typography.headlineMedium)
+        //Text(uiTextConfig.screenTitle, style = MaterialTheme.typography.headlineMedium)
         Spacer(Modifier.height(16.dp))
         Text(title)
+        Spacer(Modifier.height(16.dp))
+        Text(pin, style = MaterialTheme.typography.headlineMedium)
+        Spacer(Modifier.height(16.dp))
+        NumericKeyPad(
+            modifier = Modifier.fillMaxWidth(),
+            onNumericKeyClick = {
+                println("Pressed $it")
+                updatePin(pin + it.toString())
+            },
+            onBackSpaceClick = {
+                updatePin(pin.dropLast(1))
+            }
+        )
         errorMessage?.let {
             Spacer(Modifier.height(16.dp))
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
+        Spacer(Modifier.height(16.dp))
+        //Text(uiTextConfig.screenNote)
     }
 
 }
