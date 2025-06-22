@@ -32,3 +32,4 @@ dependencyResolutionManagement {
 
 include(":sample:composeApp")
 include(":biometricLockSdk")
+include(":pinLockUISdk")
