@@ -36,7 +36,8 @@ kotlin {
             implementation(libs.androidx.biometric)
         }
         commonMain.dependencies {
-            implementation("com.stargatex.mobile.lib:bimetriclock:0.1.0")
+            implementation(project(":biometricLockSdk"))
+            implementation(project(":pinLockUISdk"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

@@ -1,8 +1,11 @@
 package com.stargatex.mobile.lib.biometricauth.demo
 
 import androidx.compose.runtime.Composable
-import com.stargatex.mobile.lib.biometricauth.App
+import com.stargatex.mobile.lib.biometricauth.BioKeyX
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPromptConfig
+import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
+import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextConfig
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -21,12 +24,14 @@ fun SampleApp(
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
-    App(
-        platformContextProvider,
-        shouldCheckAvailability,
-        onAuthSuccess,
-        onNoEnrollment,
-        onFallback,
-        onAuthFailure
+    BioKeyX.Compose(
+        platformContextProvider = platformContextProvider,
+        shouldCheckAvailability = shouldCheckAvailability,
+        lockConfig = LockConfig(BiometricPromptConfig.default()),
+        uiTextConfig = BiometricUiTextConfig.default(),
+        onAuthSuccess = onAuthSuccess,
+        onNoEnrollment = onNoEnrollment,
+        onFallback = onFallback,
+        onAuthFailure = onAuthFailure
     )
 }
