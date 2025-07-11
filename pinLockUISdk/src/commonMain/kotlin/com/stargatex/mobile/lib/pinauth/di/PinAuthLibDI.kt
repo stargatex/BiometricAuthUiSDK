@@ -7,7 +7,7 @@ import org.koin.core.KoinApplication
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
-object PinAuthLibDI {
+internal object PinAuthLibDI {
     private var koinApp: KoinApplication? = null
 
 

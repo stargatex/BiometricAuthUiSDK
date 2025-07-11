@@ -4,6 +4,7 @@ package com.stargatex.mobile.lib.pinauth.di
 import com.stargatex.mobile.lib.pinauth.domain.di.domainModule
 import com.stargatex.mobile.lib.pinauth.platform.store.di.userManagerModule
 import com.stargatex.mobile.lib.pinauth.ui.di.uiModule
+import org.koin.core.module.Module
 import org.koin.dsl.module
 
 /**
@@ -11,12 +12,12 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun libMainModule(platformContextProvider: PlatformContextProvider) = module {
+public fun libMainModule(platformContextProvider: PlatformContextProvider): Module = module {
     includes(userManagerModule(platformContextProvider),domainModule(), uiModule())
 }
 
-expect class PlatformContext
+public expect class PlatformContext
 
-interface PlatformContextProvider {
-    fun getPlatformContext(): PlatformContext?
+public interface PlatformContextProvider {
+    public fun getPlatformContext(): PlatformContext?
 }

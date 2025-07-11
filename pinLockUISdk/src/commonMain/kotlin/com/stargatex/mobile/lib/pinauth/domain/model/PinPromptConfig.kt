@@ -11,14 +11,14 @@ import org.jetbrains.compose.resources.stringResource
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
-data class PinPromptConfig(
+public data class PinPromptConfig(
     val title: String,
     val subtitle: String,
     val description: String,
 ){
-    companion object {
+    public companion object {
         @Composable
-        fun default(): PinPromptConfig = PinPromptConfig(
+        public fun default(): PinPromptConfig = PinPromptConfig(
             title = stringResource(Res.string.pin_title),
             subtitle = stringResource(Res.string.pin_subtitle),
             description = stringResource(Res.string.pin_description)

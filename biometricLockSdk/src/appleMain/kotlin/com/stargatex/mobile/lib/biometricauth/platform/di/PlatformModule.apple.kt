@@ -8,7 +8,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun platformBiometricModule(platformContextProvider: PlatformContextProvider): Module =
+internal actual fun platformBiometricModule(platformContextProvider: PlatformContextProvider): Module =
     module {
         single<BiometricManagerUtil> { BiometricManagerUtil(BiometricAuthHelper()) }
     }

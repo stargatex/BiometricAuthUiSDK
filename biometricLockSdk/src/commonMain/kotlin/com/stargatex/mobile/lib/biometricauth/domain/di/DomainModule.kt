@@ -11,7 +11,7 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun domainModule() = module {
+internal fun domainModule() = module {
     factoryOf(::AuthorizeBiometricUseCase)
     factoryOf(::BiometricAvailabilityUseCase)
     factoryOf(::BiometricAuthUseCase)

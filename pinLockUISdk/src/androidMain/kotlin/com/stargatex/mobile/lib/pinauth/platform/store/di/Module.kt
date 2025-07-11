@@ -10,10 +10,11 @@ import org.koin.dsl.module
  * @version 1.0
  */
 
-actual typealias KMMContext = Application
+internal actual typealias KMMContext = Application
 
 
-actual fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider) = module {
+internal actual fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider) =
+    module {
     single<KVault> {
         KVault(
             context = platformContextProvider.getPlatformContext()!!.applicationContext,

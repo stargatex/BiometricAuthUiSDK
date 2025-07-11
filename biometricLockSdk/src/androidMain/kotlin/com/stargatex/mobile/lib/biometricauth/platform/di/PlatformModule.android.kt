@@ -5,7 +5,7 @@ import com.stargatex.mobile.lib.biometricauth.platform.biometric.source.Biometri
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual fun platformBiometricModule(platformContextProvider: PlatformContextProvider): Module =
+internal actual fun platformBiometricModule(platformContextProvider: PlatformContextProvider): Module =
     module {
         single<BiometricManagerUtil> {
             BiometricManagerUtil(platformContextProvider.getPlatformContext()!!)

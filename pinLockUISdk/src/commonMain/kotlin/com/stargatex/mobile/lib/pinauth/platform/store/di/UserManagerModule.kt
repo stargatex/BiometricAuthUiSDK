@@ -11,15 +11,15 @@ import org.koin.dsl.module
  * @version 1.0
  */
 
-fun userManagerModule(platformContextProvider: PlatformContextProvider) = module {
+internal fun userManagerModule(platformContextProvider: PlatformContextProvider) = module {
     includes(platformPrefStoreModule(platformContextProvider), prefStoreModule())
 
 }
 
-fun prefStoreModule() = module {
+internal fun prefStoreModule() = module {
     single<PrefStore> { SecurePrefStore(get()) }
 }
 
-expect class KMMContext
+internal expect class KMMContext
 
-expect fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider): Module
+internal expect fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider): Module

@@ -28,7 +28,7 @@ import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextCon
  */
 
 @Composable
-fun BiometricVerifyScreen(
+internal fun BiometricVerifyScreen(
     verifyViewModel: BiometricVerifyViewModel,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig = LockConfig(BiometricPromptConfig.default()),

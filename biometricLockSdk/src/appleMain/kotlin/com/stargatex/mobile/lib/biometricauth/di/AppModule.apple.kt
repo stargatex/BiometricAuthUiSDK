@@ -2,8 +2,8 @@ package com.stargatex.mobile.lib.biometricauth.di
 
 import platform.UIKit.UIViewController
 
-actual typealias PlatformContext = UIViewController
+internal actual typealias PlatformContext = UIViewController
 
-class IOSPlatformContextProvider() : PlatformContextProvider {
+public class IOSPlatformContextProvider() : PlatformContextProvider {
     override fun getPlatformContext(): PlatformContext? = null
 }

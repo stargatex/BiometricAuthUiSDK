@@ -9,6 +9,6 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun dataModule() = module {
+internal fun dataModule() = module {
     single<BiometricAuthRepository> { BiometricAuthRepositoryImpl(get()) }
 }

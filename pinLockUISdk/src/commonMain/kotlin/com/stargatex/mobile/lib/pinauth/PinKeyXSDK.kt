@@ -17,9 +17,9 @@ import org.koin.core.annotation.KoinExperimentalAPI
  * @version 1.0.0
  */
 
-interface PINKeyXFacade {
+public interface PINKeyXFacade {
     @Composable
-    fun Compose(
+    public fun Compose(
         platformContextProvider: PlatformContextProvider,
         shouldCheckAvailability: Boolean = true,
         lockConfig: LockConfig = LockConfig(
@@ -32,7 +32,7 @@ interface PINKeyXFacade {
     )
 }
 
-object PINKeyX : PINKeyXFacade {
+public object PINKeyX : PINKeyXFacade {
     @Composable
     override fun Compose(
         platformContextProvider: PlatformContextProvider,
@@ -42,7 +42,7 @@ object PINKeyX : PINKeyXFacade {
         onAuthSuccess: () -> Unit,
         onFallback: () -> Unit,
         onAuthFailure: (String) -> Unit
-    ) = App(
+    ): Unit = App(
         platformContextProvider,
         shouldCheckAvailability,
         lockConfig,

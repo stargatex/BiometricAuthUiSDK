@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-class BiometricVerifyViewModel(
+internal class BiometricVerifyViewModel(
     private val biometricAuthUseCase: BiometricAuthUseCase,
     private val biometricAvailabilityUseCase: BiometricAvailabilityUseCase
 ) : ViewModel() {

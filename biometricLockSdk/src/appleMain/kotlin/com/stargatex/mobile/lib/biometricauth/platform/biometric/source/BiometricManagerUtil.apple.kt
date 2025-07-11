@@ -18,7 +18,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 @OptIn(ExperimentalForeignApi::class)
-actual class BiometricManagerUtil(
+internal actual class BiometricManagerUtil(
     private val biometricAuthHelper: BiometricAuthHelper
 ) {
     actual suspend fun authenticate(lockConfigDto: LockConfigDto): BiometricAuthResultDto =

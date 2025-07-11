@@ -9,8 +9,8 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun platformModule(platformContextProvider: PlatformContextProvider) = module {
+internal fun platformModule(platformContextProvider: PlatformContextProvider) = module {
     includes(platformBiometricModule(platformContextProvider))
 }
 
-expect fun platformBiometricModule(platformContextProvider: PlatformContextProvider) : Module
+internal expect fun platformBiometricModule(platformContextProvider: PlatformContextProvider) : Module

@@ -8,7 +8,7 @@ import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.LockConfi
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-expect class BiometricManagerUtil {
+internal expect class BiometricManagerUtil {
     suspend fun authenticate(lockConfigDto : LockConfigDto) : BiometricAuthResultDto
     suspend fun canAuthenticate() : BiometricAvailabilityResultDto
 }

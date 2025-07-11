@@ -8,7 +8,7 @@ import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-class BiometricAuthUseCase(
+internal class BiometricAuthUseCase(
     private val authorizeBiometricUseCase: AuthorizeBiometricUseCase,
     private val biometricAvailabilityUseCase: BiometricAvailabilityUseCase
 ) {

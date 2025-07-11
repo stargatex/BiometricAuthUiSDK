@@ -12,14 +12,14 @@ import org.jetbrains.compose.resources.stringResource
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
-data class PinUiTextConfig(
+public data class PinUiTextConfig(
     val screenTitle: String,
     val screenNote: String,
     val errorPrefix: String
 ) {
-    companion object {
+    public companion object {
         @Composable
-        fun default(): PinUiTextConfig = PinUiTextConfig(
+        public fun default(): PinUiTextConfig = PinUiTextConfig(
             screenTitle = stringResource(Res.string.pin_screen_title),
             screenNote = stringResource(Res.string.pin_description),
             errorPrefix = stringResource(Res.string.pin_error_prefix)

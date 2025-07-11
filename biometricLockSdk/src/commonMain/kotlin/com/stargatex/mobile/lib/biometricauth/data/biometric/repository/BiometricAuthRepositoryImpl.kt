@@ -12,7 +12,7 @@ import com.stargatex.mobile.lib.biometricauth.platform.biometric.source.Biometri
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-class BiometricAuthRepositoryImpl(private val biometricManagerUtil: BiometricManagerUtil) :
+internal class BiometricAuthRepositoryImpl(private val biometricManagerUtil: BiometricManagerUtil) :
     BiometricAuthRepository {
     override suspend fun authenticate(lockConfig: LockConfig): BiometricAuthResult {
         return biometricManagerUtil.authenticate(lockConfig.toPlatform()).toDomain()

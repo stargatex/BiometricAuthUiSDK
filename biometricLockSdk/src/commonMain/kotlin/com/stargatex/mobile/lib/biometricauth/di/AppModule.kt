@@ -11,12 +11,12 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun libMainModule(platformContextProvider: PlatformContextProvider) = module {
+internal fun libMainModule(platformContextProvider: PlatformContextProvider) = module {
     includes(platformModule(platformContextProvider), dataModule(), domainModule(), uiModule())
 }
 
-expect class PlatformContext
+public expect class PlatformContext
 
-interface PlatformContextProvider {
-    fun getPlatformContext(): PlatformContext?
+public interface PlatformContextProvider {
+    public fun getPlatformContext(): PlatformContext?
 }

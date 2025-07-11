@@ -4,7 +4,7 @@ package com.stargatex.mobile.lib.pinauth.platform.store.pref
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
-interface PrefStore {
+internal interface PrefStore {
     fun save(name: String, stringValue: String?)
     fun save(name: String, intValue: Int?)
     fun save(name: String, longValue: Long?)

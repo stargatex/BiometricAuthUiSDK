@@ -17,9 +17,9 @@ import org.koin.core.annotation.KoinExperimentalAPI
  * @version 1.0.0
  */
 
-interface BioKeyXFacade {
+public interface BioKeyXFacade {
     @Composable
-    fun Compose(
+    public fun Compose(
         platformContextProvider: PlatformContextProvider,
         shouldCheckAvailability: Boolean = true,
         lockConfig: LockConfig = LockConfig(
@@ -33,7 +33,7 @@ interface BioKeyXFacade {
     )
 }
 
-object BioKeyX : BioKeyXFacade {
+public object BioKeyX : BioKeyXFacade {
     @Composable
     override fun Compose(
         platformContextProvider: PlatformContextProvider,
@@ -44,7 +44,7 @@ object BioKeyX : BioKeyXFacade {
         onNoEnrollment: () -> Unit,
         onFallback: () -> Unit,
         onAuthFailure: (String) -> Unit
-    ) = App(
+    ): Unit = App(
         platformContextProvider,
         shouldCheckAvailability,
         lockConfig,
@@ -60,7 +60,7 @@ object BioKeyX : BioKeyXFacade {
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 @Preview
-fun App(
+internal fun App(
     platformContextProvider: PlatformContextProvider,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig,

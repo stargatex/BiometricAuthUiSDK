@@ -10,11 +10,11 @@ import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.LockConfi
  * @version 1.0
  */
 
-fun LockConfig.toPlatform(): LockConfigDto {
+internal fun LockConfig.toPlatform(): LockConfigDto {
     return LockConfigDto(biometricPromptConfig.toPlatform())
 }
 
-fun BiometricPromptConfig.toPlatform(): BiometricPromptConfigDto {
+internal fun BiometricPromptConfig.toPlatform(): BiometricPromptConfigDto {
     return BiometricPromptConfigDto(
         title, subtitle, description
     )

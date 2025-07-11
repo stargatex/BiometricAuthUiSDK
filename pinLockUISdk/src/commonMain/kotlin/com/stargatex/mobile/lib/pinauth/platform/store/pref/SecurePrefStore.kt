@@ -7,7 +7,7 @@ import io.github.aakira.napier.Napier
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
-class SecurePrefStore(private val store: KVault) : PrefStore {
+internal class SecurePrefStore(private val store: KVault) : PrefStore {
 
     override fun save(name: String, stringValue: String?) {
         with(store) {

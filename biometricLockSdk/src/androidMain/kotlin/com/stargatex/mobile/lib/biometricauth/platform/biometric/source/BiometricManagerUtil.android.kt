@@ -13,7 +13,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 
-actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
+internal actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private val executor = ContextCompat.getMainExecutor(activity)
 

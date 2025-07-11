@@ -9,6 +9,6 @@ import org.koin.dsl.module
  * @version 1.0.0
  */
 
-fun uiModule() = module {
+internal fun uiModule() = module {
     viewModelOf(::BiometricVerifyViewModel)
 }

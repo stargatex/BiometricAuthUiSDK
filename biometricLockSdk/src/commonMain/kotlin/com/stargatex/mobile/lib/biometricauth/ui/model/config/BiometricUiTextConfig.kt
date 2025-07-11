@@ -19,7 +19,7 @@ import org.jetbrains.compose.resources.stringResource
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
-data class BiometricUiTextConfig(
+public data class BiometricUiTextConfig(
     val screenTitle: String,
     val available: String,
     val noEnrollment: String,
@@ -32,9 +32,9 @@ data class BiometricUiTextConfig(
     val authExhausted: String,
     val errorPrefix: String
 ) {
-    companion object {
+    public companion object {
         @Composable
-        fun default(): BiometricUiTextConfig = BiometricUiTextConfig(
+        public fun default(): BiometricUiTextConfig = BiometricUiTextConfig(
             screenTitle = stringResource(Res.string.biometric_screen_title),
             available = stringResource(Res.string.biometric_available),
             noEnrollment = stringResource(Res.string.biometric_no_enrollment),

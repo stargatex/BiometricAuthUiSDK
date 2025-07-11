@@ -10,8 +10,9 @@ import platform.darwin.NSObject
  * @version 1.0
  */
 
-actual typealias KMMContext = NSObject
+internal actual typealias KMMContext = NSObject
 
-actual fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider) = module {
+internal actual fun platformPrefStoreModule(platformContextProvider: PlatformContextProvider) =
+    module {
     single<KVault> { KVault() }
 }

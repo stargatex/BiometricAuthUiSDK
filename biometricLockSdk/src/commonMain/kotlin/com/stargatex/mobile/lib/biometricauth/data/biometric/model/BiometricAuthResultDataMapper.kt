@@ -10,7 +10,7 @@ import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.Biometric
  * @version 1.0.0
  */
 
-fun BiometricAuthResultDto.toDomain(): BiometricAuthResult {
+internal fun BiometricAuthResultDto.toDomain(): BiometricAuthResult {
     return when (this) {
         is BiometricAuthResultDto.AttemptExhausted -> BiometricAuthResult.AttemptExhausted
         is BiometricAuthResultDto.Error -> BiometricAuthResult.Error(message = this.message)
@@ -20,7 +20,7 @@ fun BiometricAuthResultDto.toDomain(): BiometricAuthResult {
     }
 }
 
-fun BiometricAvailabilityResultDto.toDomain(): BiometricAvailabilityResult{
+internal fun BiometricAvailabilityResultDto.toDomain(): BiometricAvailabilityResult{
     return when (this) {
         is BiometricAvailabilityResultDto.HardwareUnavailable -> BiometricAvailabilityResult.HardwareUnavailable
         is BiometricAvailabilityResultDto.NoEnrollment -> BiometricAvailabilityResult.NoEnrollment

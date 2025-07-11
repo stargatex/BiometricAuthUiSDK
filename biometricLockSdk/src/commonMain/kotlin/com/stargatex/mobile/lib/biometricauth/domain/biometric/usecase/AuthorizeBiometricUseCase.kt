@@ -8,7 +8,7 @@ import com.stargatex.mobile.lib.biometricauth.domain.biometric.repository.Biomet
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-class AuthorizeBiometricUseCase(
+internal class AuthorizeBiometricUseCase(
     private val repository: BiometricAuthRepository
 ) {
     suspend operator fun invoke(lockConfig: LockConfig): BiometricAuthResult {

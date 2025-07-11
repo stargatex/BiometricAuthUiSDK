@@ -7,7 +7,7 @@ import com.stargatex.mobile.lib.pinauth.platform.store.quilifier.LibStoreConstan
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-class SavePINUseCase(
+internal class SavePINUseCase(
     private val prefStore: PrefStore
 ) {
     suspend operator fun invoke(value: String) {

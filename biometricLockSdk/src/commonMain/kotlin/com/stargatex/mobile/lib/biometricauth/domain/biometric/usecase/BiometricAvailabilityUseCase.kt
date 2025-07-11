@@ -7,7 +7,7 @@ import com.stargatex.mobile.lib.biometricauth.domain.biometric.repository.Biomet
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-class BiometricAvailabilityUseCase(
+internal class BiometricAvailabilityUseCase(
     private val repository: BiometricAuthRepository
 ) {
     suspend operator fun invoke(): BiometricAvailabilityResult {
