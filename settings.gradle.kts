@@ -2,6 +2,7 @@ rootProject.name = "BiometricAuth"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("plugins")
     repositories {
         google {
             mavenContent {
