@@ -17,27 +17,30 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.stargatex.mobile.lib.biometricauth.di.AndroidPlatformContextProvider
-import com.stargatex.mobile.lib.biometricauth.di.FakeAndroidPlatformContextProvider
-import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
+import com.stargatex.mobile.lib.biometricauth.di.AndroidPlatformContextProvider as BioAndroidPlatformContextProvider
+import com.stargatex.mobile.lib.biometricauth.di.FakeAndroidPlatformContextProvider as FakeBioAndroidPlatformContextProvider
+import com.stargatex.mobile.lib.pinauth.di.AndroidPlatformContextProvider as PinAndroidPlatformContextProvider
+import com.stargatex.mobile.lib.pinauth.di.FakeAndroidPlatformContextProvider as FakePinAndroidPlatformContextProvider
 
 class MainActivity : AppCompatActivity() {
 
-    private val platformContextProvider = AndroidPlatformContextProvider(this)
+    private val bioPlatformContextProvider = BioAndroidPlatformContextProvider(this)
+    private val pinPlatformContextProvider = PinAndroidPlatformContextProvider(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         setContent {
-            BiometricWrapperScreen(platformContextProvider)
+            BiometricWrapperScreen(bioPlatformContextProvider, pinPlatformContextProvider)
         }
     }
 }
 
 @Composable
 fun BiometricWrapperScreen(
-    platformContextProvider: PlatformContextProvider,
+    bioPlatformContextProvider: BioAndroidPlatformContextProvider,
+    pinPlatformContextProvider: PinAndroidPlatformContextProvider,
 ) {
     var shouldCheck by remember { mutableStateOf(true) }
     var hasLaunchedEnrollment by remember { mutableStateOf(false) }
@@ -53,7 +56,8 @@ fun BiometricWrapperScreen(
     }
 
     SampleApp(
-        platformContextProvider,
+        bioPlatformContextProvider,
+        pinPlatformContextProvider,
         shouldCheckAvailability = shouldCheck,
         onNoEnrollment = {
             if (!hasLaunchedEnrollment && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -75,5 +79,6 @@ fun BiometricWrapperScreen(
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    SampleApp(FakeAndroidPlatformContextProvider())
+    SampleApp(FakeBioAndroidPlatformContextProvider()
+        , FakePinAndroidPlatformContextProvider())
 }
