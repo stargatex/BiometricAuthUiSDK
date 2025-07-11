@@ -22,6 +22,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         with(project) {
+
+            group = "io.github.stargatex.mobile.lib"
+            version = "1.0.0"
+
             pluginManager.apply("org.jetbrains.kotlin.multiplatform")
             pluginManager.apply("com.android.library")
             pluginManager.apply("maven-publish")
@@ -55,14 +59,14 @@ class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
                     }
                 }
 
-                val javadocJar = tasks.register<Jar>("javadocJar") {
+                /*val javadocJar = tasks.register<Jar>("javadocJar") {
                     dependsOn("dokkaHtml")
                     archiveClassifier.set("javadoc")
                     from(layout.buildDirectory.dir("dokka/html"))
-                }
+                }*/
 
                 publishing.publications.withType<MavenPublication>().configureEach {
-                    artifact(javadocJar.get())
+                    //artifact(javadocJar.get())
 
                     artifactId = when (project.name) {
                         "biometricLockSdk" -> if (name == "kotlinMultiplatform") "bimetriclock" else "bimetriclock-$name"

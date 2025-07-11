@@ -100,17 +100,6 @@ dependencies {
 }
 
 publishing {
-    publications {
-        withType<MavenPublication>().configureEach {
-            groupId = "com.stargatex.mobile.lib"
-            version = "0.1.1"
-            artifactId = if (name == "kotlinMultiplatform") {
-                "pinlock"
-            } else {
-                "pinlock-$name"
-            }
-        }
-    }
 
     repositories {
         maven {
