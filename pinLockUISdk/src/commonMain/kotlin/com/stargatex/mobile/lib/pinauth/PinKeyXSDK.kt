@@ -6,6 +6,7 @@ import com.stargatex.mobile.lib.pinauth.di.PinAuthLibDI
 import com.stargatex.mobile.lib.pinauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.domain.model.LockConfig
 import com.stargatex.mobile.lib.pinauth.domain.model.PinPromptConfig
+import com.stargatex.mobile.lib.pinauth.domain.usecase.ClearPINUseCase
 import com.stargatex.mobile.lib.pinauth.ui.PINVerifyViewModel
 import com.stargatex.mobile.lib.pinauth.ui.PinVerifyScreen
 import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
@@ -30,6 +31,8 @@ public interface PINKeyXFacade {
         onFallback: () -> Unit = {},
         onAuthFailure: (String) -> Unit = {}
     )
+
+    public fun clearStore(platformContextProvider: PlatformContextProvider)
 }
 
 public object PINKeyX : PINKeyXFacade {
@@ -51,6 +54,10 @@ public object PINKeyX : PINKeyXFacade {
         onFallback,
         onAuthFailure
     )
+
+    override fun clearStore(platformContextProvider: PlatformContextProvider) {
+        clearPinStore(platformContextProvider)
+    }
 }
 
 
@@ -105,4 +112,10 @@ private fun Base(
         onFallback = onFallback,
         onAuthFailure = onAuthFailure
     )
+}
+
+internal fun clearPinStore(platformContextProvider: PlatformContextProvider) {
+    PinAuthLibDI.start(platformContextProvider)
+    val clearPINUseCase: ClearPINUseCase = PinAuthLibDI.getKoin().get()
+    clearPINUseCase.invoke()
 }

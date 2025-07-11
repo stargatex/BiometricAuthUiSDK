@@ -6,5 +6,6 @@ package com.stargatex.mobile.lib.pinauth.domain.usecase
  */
 internal data class PINUseCase(
     val savedPINUseCase: SavePINUseCase,
-    val fetchSavedPINUseCase: FetchSavedPINUseCase
+    val fetchSavedPINUseCase: FetchSavedPINUseCase,
+    val clearPINUseCase: ClearPINUseCase
 )

@@ -1,5 +1,6 @@
 package com.stargatex.mobile.lib.pinauth.domain.di
 
+import com.stargatex.mobile.lib.pinauth.domain.usecase.ClearPINUseCase
 import com.stargatex.mobile.lib.pinauth.domain.usecase.FetchSavedPINUseCase
 import com.stargatex.mobile.lib.pinauth.domain.usecase.PINUseCase
 import com.stargatex.mobile.lib.pinauth.domain.usecase.SavePINUseCase
@@ -15,4 +16,5 @@ internal fun domainModule() = module {
     factoryOf(::PINUseCase)
     factoryOf(::SavePINUseCase)
     factoryOf(::FetchSavedPINUseCase)
+    factoryOf(::ClearPINUseCase)
 }
