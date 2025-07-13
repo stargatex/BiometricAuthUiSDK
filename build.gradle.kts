@@ -8,5 +8,6 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.swiftklib) apply false
     alias(libs.plugins.dokka) apply false
+    alias(libs.plugins.vanniktech.maven) apply false
 
 }

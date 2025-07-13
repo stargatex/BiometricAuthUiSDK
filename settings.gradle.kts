@@ -34,3 +34,14 @@ dependencyResolutionManagement {
 include(":sample:composeApp")
 include(":biometricLockSdk")
 include(":pinLockUISdk")
+
+gradle.projectsEvaluated {
+    // skip sample app from publishin
+    project(":sample:composeApp").apply {
+        plugins.withId("com.vanniktech.maven.publish") {
+            extensions.findByType<PublishingExtension>()?.apply {
+                publications.clear()
+            }
+        }
+    }
+}
