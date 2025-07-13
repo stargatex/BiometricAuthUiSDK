@@ -2,6 +2,7 @@ rootProject.name = "BiometricAuth"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("plugins")
     repositories {
         google {
             mavenContent {
@@ -11,6 +12,7 @@ pluginManagement {
             }
         }
         mavenCentral()
+        mavenLocal()
         gradlePluginPortal()
     }
 }
@@ -24,8 +26,22 @@ dependencyResolutionManagement {
                 includeGroupAndSubgroups("com.google")
             }
         }
+        mavenLocal()
         mavenCentral()
     }
 }
 
-include(":composeApp")
+include(":sample:composeApp")
+include(":biometricLockSdk")
+include(":pinLockUISdk")
+
+gradle.projectsEvaluated {
+    // skip sample app from publishin
+    project(":sample:composeApp").apply {
+        plugins.withId("com.vanniktech.maven.publish") {
+            extensions.findByType<PublishingExtension>()?.apply {
+                publications.clear()
+            }
+        }
+    }
+}
