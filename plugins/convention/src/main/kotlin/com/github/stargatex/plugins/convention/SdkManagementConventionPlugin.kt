@@ -34,18 +34,19 @@ class SdkManagementConventionPlugin : Plugin<Project> {
         val enableCoverage = extension.enableCoverage.get()
 
         with(project.tasks) {
-            createTestTasks(sdkModules, enableiOSTests, enableAndroidTests)
-            createBuildTasks(sdkModules)
-            createVerificationTasks(sdkModules, enableLint)
-            createPublishingTasks(sdkModules)
-            createDocumentationTasks(sdkModules, enableDokka)
-            createCoverageTasks(sdkModules, enableCoverage)
+            createTestTasks(project, sdkModules, enableiOSTests, enableAndroidTests)
+            createBuildTasks(project, sdkModules)
+            createVerificationTasks(project, sdkModules, enableLint)
+            createPublishingTasks(project, sdkModules)
+            createDocumentationTasks(project, sdkModules, enableDokka)
+            createCoverageTasks(project, sdkModules, enableCoverage)
             createUtilityTasks(sdkModules)
             createCompositeTasks()
         }
     }
 
     private fun TaskContainer.createTestTasks(
+        rootProject: Project,
         sdkModules: List<String>,
         enableiOSTests: Boolean,
         enableAndroidTests: Boolean
@@ -54,86 +55,186 @@ class SdkManagementConventionPlugin : Plugin<Project> {
             description = "Run all tests for SDK libraries"
             group = "verification"
 
-            dependsOn(sdkModules.map { "$it:jvmTest" })
+            val testTasks = mutableListOf<String>()
 
-            if (enableAndroidTests) {
-                dependsOn(sdkModules.map { "$it:testDebugUnitTest" })
+
+            sdkModules.forEach { module ->
+                val moduleProject = rootProject.findProject(module)
+                if (moduleProject != null) {
+
+                    if (hasTask(moduleProject, "jvmTest")) {
+                        testTasks.add("$module:jvmTest")
+                    } else if (hasTask(moduleProject, "test")) {
+                        testTasks.add("$module:test")
+                    }
+
+                    if (enableAndroidTests) {
+                        if (hasTask(moduleProject, "testDebugUnitTest")) {
+                            testTasks.add("$module:testDebugUnitTest")
+                        }
+                    }
+
+                    if (enableiOSTests && isMacOS()) {
+                        if (hasTask(moduleProject, "iosSimulatorArm64Test")) {
+                            testTasks.add("$module:iosSimulatorArm64Test")
+                        }
+                        if (hasTask(moduleProject, "iosX64Test")) {
+                            testTasks.add("$module:iosX64Test")
+                        }
+                    }
+                }
             }
 
-            if (enableiOSTests && isMacOS()) {
-                dependsOn(sdkModules.flatMap { module ->
-                    listOf(
-                        "$module:iosSimulatorArm64Test",
-                        "$module:iosX64Test"
-                    )
-                })
+            if (testTasks.isNotEmpty()) {
+                dependsOn(testTasks)
+            }
+
+            doLast {
+                if (testTasks.isEmpty()) {
+                    println("No test tasks found for SDK modules")
+                } else {
+                    println("Executed test tasks: ${testTasks.joinToString(", ")}")
+                }
             }
         }
     }
 
-    private fun TaskContainer.createBuildTasks(sdkModules: List<String>) {
+    private fun TaskContainer.createBuildTasks(rootProject: Project, sdkModules: List<String>) {
         register("assembleAllLibraries") {
             description = "Assemble all SDK libraries"
             group = "build"
-            dependsOn(sdkModules.map { "$it:assemble" })
+
+            val assembleTasks = sdkModules.mapNotNull { module ->
+                val moduleProject = rootProject.findProject(module)
+                if (moduleProject != null && hasTask(moduleProject, "assemble")) {
+                    "$module:assemble"
+                } else null
+            }
+
+            if (assembleTasks.isNotEmpty()) {
+                dependsOn(assembleTasks)
+            }
         }
 
         register("cleanAllLibraries") {
             description = "Clean all SDK libraries"
             group = "build"
-            dependsOn(sdkModules.map { "$it:clean" })
+
+            val cleanTasks = sdkModules.mapNotNull { module ->
+                val moduleProject = rootProject.findProject(module)
+                if (moduleProject != null && hasTask(moduleProject, "clean")) {
+                    "$module:clean"
+                } else null
+            }
+
+            if (cleanTasks.isNotEmpty()) {
+                dependsOn(cleanTasks)
+            }
         }
     }
 
-    private fun TaskContainer.createVerificationTasks(
-        sdkModules: List<String>,
-        enableLint: Boolean
-    ) {
+    private fun TaskContainer.createVerificationTasks(rootProject: Project, sdkModules: List<String>, enableLint: Boolean) {
         register("apiCheckAllLibraries") {
             description = "Check API compatibility for all SDK libraries"
             group = "verification"
-            dependsOn(sdkModules.map { "$it:apiCheck" })
+
+            val apiCheckTasks = sdkModules.mapNotNull { module ->
+                val moduleProject = rootProject.findProject(module)
+                if (moduleProject != null && hasTask(moduleProject, "apiCheck")) {
+                    "$module:apiCheck"
+                } else null
+            }
+
+            if (apiCheckTasks.isNotEmpty()) {
+                dependsOn(apiCheckTasks)
+            }
         }
 
         if (enableLint) {
             register("lintAllLibraries") {
                 description = "Run lint checks for all SDK libraries"
                 group = "verification"
-                dependsOn(sdkModules.map { "$it:lintDebug" })
+
+                val lintTasks = sdkModules.mapNotNull { module ->
+                    val moduleProject = rootProject.findProject(module)
+                    if (moduleProject != null) {
+                        when {
+                            hasTask(moduleProject, "lintDebug") -> "$module:lintDebug"
+                            hasTask(moduleProject, "lint") -> "$module:lint"
+                            else -> null
+                        }
+                    } else null
+                }
+
+                if (lintTasks.isNotEmpty()) {
+                    dependsOn(lintTasks)
+                }
             }
         }
     }
 
-    private fun TaskContainer.createPublishingTasks(sdkModules: List<String>) {
+    private fun TaskContainer.createPublishingTasks(rootProject: Project, sdkModules: List<String>) {
         register("publishAllLibraries") {
             description = "Publish all SDK libraries to Maven Central"
             group = "publishing"
-            dependsOn(sdkModules.map { "$it:publishToMavenCentral" })
+
+            val publishTasks = sdkModules.mapNotNull { module ->
+                val moduleProject = rootProject.findProject(module)
+                if (moduleProject != null) {
+                    when {
+                        hasTask(moduleProject, "publishToMavenCentral") -> "$module:publishToMavenCentral"
+                        hasTask(moduleProject, "publish") -> "$module:publish"
+                        else -> null
+                    }
+                } else null
+            }
+
+            if (publishTasks.isNotEmpty()) {
+                dependsOn(publishTasks)
+            }
         }
     }
 
-    private fun TaskContainer.createDocumentationTasks(
-        sdkModules: List<String>,
-        enableDokka: Boolean
-    ) {
+    private fun TaskContainer.createDocumentationTasks(rootProject: Project, sdkModules: List<String>, enableDokka: Boolean) {
         if (enableDokka) {
             register("dokkaAllLibraries") {
                 description = "Generate documentation for all SDK libraries"
                 group = "documentation"
-                dependsOn(sdkModules.map { "$it:dokkaHtml" })
+
+                val dokkaTasks = sdkModules.mapNotNull { module ->
+                    val moduleProject = rootProject.findProject(module)
+                    if (moduleProject != null && hasTask(moduleProject, "dokkaHtml")) {
+                        "$module:dokkaHtml"
+                    } else null
+                }
+
+                if (dokkaTasks.isNotEmpty()) {
+                    dependsOn(dokkaTasks)
+                }
             }
         }
     }
 
-    private fun TaskContainer.createCoverageTasks(
-        sdkModules: List<String>,
-        enableCoverage: Boolean
-    ) {
+    private fun TaskContainer.createCoverageTasks(rootProject: Project, sdkModules: List<String>, enableCoverage: Boolean) {
         if (enableCoverage) {
             register("coverageAllLibraries") {
                 description = "Generate code coverage reports for all SDK libraries"
                 group = "verification"
-                dependsOn(sdkModules.map { "$it:koverHtmlReport" })
+
+                val coverageTasks = sdkModules.mapNotNull { module ->
+                    val moduleProject = rootProject.findProject(module)
+                    if (moduleProject != null) {
+                        when {
+                            hasTask(moduleProject, "koverHtmlReport") -> "$module:koverHtmlReport"
+                            hasTask(moduleProject, "jacocoTestReport") -> "$module:jacocoTestReport"
+                            else -> null
+                        }
+                    } else null
+                }
+
+                if (coverageTasks.isNotEmpty()) {
+                    dependsOn(coverageTasks)
+                }
 
                 doLast {
                     println("Coverage reports generated for all SDK libraries")
@@ -201,6 +302,15 @@ class SdkManagementConventionPlugin : Plugin<Project> {
             }
         }
     }
+
+    private fun hasTask(project: Project, taskName: String): Boolean {
+        return try {
+            project.tasks.findByName(taskName) != null
+        } catch (e: Exception) {
+            false
+        }
+    }
+
 
     private fun isMacOS(): Boolean {
         return System.getProperty("os.name").contains("Mac", ignoreCase = true)
