@@ -1,0 +1,100 @@
+public final class com/stargatex/mobile/lib/biometricauth/BioKeyX : com/stargatex/mobile/lib/biometricauth/BioKeyXFacade {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/stargatex/mobile/lib/biometricauth/BioKeyX;
+	public fun Compose (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+}
+
+public abstract interface class com/stargatex/mobile/lib/biometricauth/BioKeyXFacade {
+	public abstract fun Compose (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/BioKeyXFacade$ComposeDefaultImpls {
+	public static final fun Compose$default (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lcom/stargatex/mobile/lib/biometricauth/BioKeyXFacade;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/di/AndroidPlatformContextProvider : com/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider {
+	public static final field $stable I
+	public fun <init> (Landroidx/appcompat/app/AppCompatActivity;)V
+	public fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/di/FakeAndroidPlatformContextProvider : com/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
+}
+
+public abstract interface class com/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider {
+	public abstract fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig {
+	public static final field $stable I
+	public static final field Companion Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;
+	public static synthetic fun copy$default (Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
+	public final fun getSubtitle ()Ljava/lang/String;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig$Companion {
+	public final fun default (Landroidx/compose/runtime/Composer;I)Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig {
+	public static final field $stable I
+	public fun <init> (Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;)V
+	public final fun component1 ()Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;
+	public final fun copy (Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;)Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;
+	public static synthetic fun copy$default (Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;ILjava/lang/Object;)Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBiometricPromptConfig ()Lcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig {
+	public static final field $stable I
+	public static final field Companion Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig$Companion;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()Ljava/lang/String;
+	public final fun component11 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
+	public static synthetic fun copy$default (Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAuthCancelled ()Ljava/lang/String;
+	public final fun getAuthExhausted ()Ljava/lang/String;
+	public final fun getAuthFailed ()Ljava/lang/String;
+	public final fun getAuthSuccess ()Ljava/lang/String;
+	public final fun getAvailable ()Ljava/lang/String;
+	public final fun getErrorPrefix ()Ljava/lang/String;
+	public final fun getHardwareUnavailable ()Ljava/lang/String;
+	public final fun getNoEnrollment ()Ljava/lang/String;
+	public final fun getNoHardware ()Ljava/lang/String;
+	public final fun getScreenTitle ()Ljava/lang/String;
+	public final fun getUnknown ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig$Companion {
+	public final fun default (Landroidx/compose/runtime/Composer;I)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
+}
+
