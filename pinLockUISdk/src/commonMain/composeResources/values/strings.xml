@@ -1,0 +1,13 @@
+<resources>
+    <string name="pin_lib_name">PinKeyX</string>
+    <string name="pin_title">App Lock</string>
+    <string name="pin_subtitle">Unlock the app using your PINs</string>
+    <string name="pin_description">Enter your PIN</string>
+    <string name="pin_set_new_pin">Set a new PIN</string>
+    <string name="pin_confirm_pin">Confirm your PIN</string>
+    <string name="pin_enter_pin">Enter your PIN</string>
+    <string name="pin_screen_title">PIN Authentication</string>
+    <string name="pin_not_match">PINs do not match</string>
+    <string name="pin_incorrect_pin">Incorrect PIN</string>
+    <string name="pin_error_prefix">Error</string>
+</resources>
