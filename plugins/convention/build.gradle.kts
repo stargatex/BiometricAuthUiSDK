@@ -23,6 +23,7 @@ dependencies {
     compileOnly(libs.kotlin.gradlePlugin)
     compileOnly(libs.dokka.gradlePlugin)
     compileOnly(libs.vanniktech.gradlePlugin)
+    compileOnly(libs.binary.compatibility.validator.gradlePlugin)
 }
 
 tasks {
@@ -34,9 +35,14 @@ tasks {
 
 gradlePlugin {
     plugins {
-        register("KotlinMultiplatformSDK"){
+        register("KotlinMultiplatformSDK") {
             id = "stargatex.convention.kotlin.multiplatform.sdk"
             implementationClass = "com.github.stargatex.plugins.convention.KotlinMultiplatformSDKConventionPlugin"
+        }
+
+        register("KMPSdkManagementPlugin") {
+            id = "stargatex.convention.kotlin.multiplatform.build.management"
+            implementationClass = "com.github.stargatex.plugins.convention.SdkManagementConventionPlugin"
         }
     }
 }
