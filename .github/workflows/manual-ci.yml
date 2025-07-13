@@ -12,6 +12,10 @@ on:
         type: boolean
         default: false
 
+concurrency:
+  group: '${{ github.workflow }}-${{ github.actor }}'
+  cancel-in-progress: true
+
 jobs:
   manual-ci:
     name: Manual CI Run
@@ -39,6 +43,10 @@ on:
         required: false
         type: string
 
+concurrency:
+  group: '${{ github.workflow }}-${{ inputs.publish-type }}-${{ github.actor }}'
+  cancel-in-progress: false
+
 jobs:
   publish-snapshot:
     name: Publish Snapshot
@@ -63,6 +71,10 @@ on:
         description: 'Deploy to GitHub Pages'
         type: boolean
         default: true
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.actor }}'
+  cancel-in-progress: true
 
 jobs:
   generate-docs:
