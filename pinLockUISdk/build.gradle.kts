@@ -108,3 +108,8 @@ publishing {
         }
     }
 }
+
+
+sdkConvention {
+    description = "Custom PIN Kotlin Multiplatform UI SDK"
+}

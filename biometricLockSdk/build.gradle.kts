@@ -114,3 +114,8 @@ publishing {
         }
     }
 }
+
+
+sdkConvention {
+    description = "Biometric Auth Kotlin Multiplatform UI SDK"
+}
