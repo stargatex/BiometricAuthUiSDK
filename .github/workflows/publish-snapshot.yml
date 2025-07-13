@@ -2,13 +2,22 @@ name: Publish Snapshot
 
 on:
   workflow_call:
+    secrets:
+      MAVEN_CENTRAL_USERNAME:
+        required: true
+      MAVEN_CENTRAL_PASSWORD:
+        required: true
+      GPG_KEY_SECRET:
+        required: true
+      GPG_KEY_PASSWORD:
+        required: true
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 
 jobs:
-  publish-snapshot:
-    name: Publish Snapshot
+  publish:
+    name: Publish Snapshot to SonarType Central
     runs-on: macos-latest
 
     steps:
@@ -24,11 +33,6 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
-      - name: Set snapshot version
-        run: |
-          # Update version to include -SNAPSHOT suffix
-          sed -i.bak 's/version = "\([^"]*\)"/version = "\1-SNAPSHOT"/' build.gradle.kts
-
       - name: Create local.properties
         run: |
           echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> local.properties
@@ -36,9 +40,26 @@ jobs:
           echo "gpgKeySecret=${{ secrets.GPG_KEY_SECRET }}" >> local.properties
           echo "gpgKeyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> local.properties
 
-      - name: Publish snapshot to Maven Central
-        run: ./gradlew publishAllPublicationsToMavenCentral --no-daemon --no-configuration-cache --stacktrace
+      - name: Set snapshot version
+        run: |
+          echo "isSnapshot=true" >> gradle.properties
+
+      - name: Publish snapshot to SonarType Central
+        run: ./gradlew publishAllLibraries --no-daemon --stacktrace
 
       - name: Clean up
         if: always()
         run: rm -f local.properties
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "Snapshot published successfully to SonarType Central"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Snapshot publication failed"
+          echo "Please check the logs above for details"

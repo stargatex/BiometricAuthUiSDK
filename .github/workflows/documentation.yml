@@ -2,13 +2,16 @@ name: Documentation
 
 on:
   workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        required: true
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 
 jobs:
-  documentation:
-    name: Generate Documentation
+  generate-docs:
+    name: Generate and Deploy Documentation
     runs-on: ubuntu-latest
 
     steps:
@@ -25,10 +28,24 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Generate documentation
-        run: ./gradlew dokkaHtml --no-daemon --stacktrace
+        run: ./gradlew dokkaAllLibraries --no-daemon --stacktrace
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/dokka/html
+          publish_dir: ./build/dokka/multimodule
+          #cname: biometricauth-docs.com
+
+      - name: Generate documentation summary
+        run: |
+          echo "📚 Documentation generated and deployed successfully!"
+          echo "Available at: website"
+          echo "Commit: ${{ github.sha }}"
+
+      - name: Upload documentation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: ./build/dokka/multimodule
+          retention-days: 30

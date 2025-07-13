@@ -2,13 +2,24 @@ name: Publish Release
 
 on:
   workflow_call:
+    secrets:
+      MAVEN_CENTRAL_USERNAME:
+        required: true
+      MAVEN_CENTRAL_PASSWORD:
+        required: true
+      GPG_KEY_SECRET:
+        required: true
+      GPG_KEY_PASSWORD:
+        required: true
+      GITHUB_TOKEN:
+        required: true
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
 
 jobs:
-  publish-release:
-    name: Publish Release
+  publish:
+    name: Publish Release to SonarType Central
     runs-on: macos-latest
 
     steps:
@@ -28,11 +39,6 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Update version in build file
-        run: |
-          # Update version to match the git tag
-          sed -i.bak 's/version = "[^"]*"/version = "${{ steps.get_version.outputs.VERSION }}"/' build.gradle.kts
-
       - name: Create local.properties
         run: |
           echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> local.properties
@@ -40,8 +46,15 @@ jobs:
           echo "gpgKeySecret=${{ secrets.GPG_KEY_SECRET }}" >> local.properties
           echo "gpgKeyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> local.properties
 
-      - name: Publish release to Maven Central
-        run: ./gradlew publishAllPublicationsToMavenCentral --no-daemon --no-configuration-cache --stacktrace
+      - name: Set release version
+        run: |
+          echo "releaseVersion=${{ steps.get_version.outputs.VERSION }}" >> gradle.properties
+
+      - name: Prepare release
+        run: ./gradlew prepareRelease --no-daemon --stacktrace
+
+      - name: Publish release to SonarType Central
+        run: ./gradlew publishAllLibraries --no-daemon --stacktrace
 
       - name: Generate changelog
         id: changelog
@@ -68,3 +81,17 @@ jobs:
       - name: Clean up
         if: always()
         run: rm -f local.properties
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "Release ${{ steps.get_version.outputs.VERSION }} published successfully!"
+          echo "SonarType Central: Published"
+          echo "GitHub Release: Created"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Release publication failed"
+          echo "Version: ${{ steps.get_version.outputs.VERSION }}"
+          echo "Please check the logs above for details"
