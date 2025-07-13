@@ -11,8 +11,6 @@ on:
         required: true
       GPG_KEY_PASSWORD:
         required: true
-      GITHUB_TOKEN:
-        required: true
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
