@@ -65,7 +65,7 @@ jobs:
           echo "isSnapshot=true" >> gradle.properties
 
       - name: Publish snapshot to SonarType Central
-        run: ./gradlew publishAllLibraries --no-daemon --stacktrace
+        run: ./gradlew publishAllLibraries --no-configuration-cache --no-daemon --stacktrace
 
       - name: Save Kotlin/Native cache
         if: ${{ always() }}

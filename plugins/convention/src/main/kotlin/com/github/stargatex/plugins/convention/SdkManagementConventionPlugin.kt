@@ -182,7 +182,7 @@ class SdkManagementConventionPlugin : Plugin<Project> {
                 val moduleProject = rootProject.findProject(module)
                 if (moduleProject != null) {
                     when {
-                        hasTask(moduleProject, "publishToMavenCentral") -> "$module:publishToMavenCentral --no-configuration-cache"
+                        hasTask(moduleProject, "publishToMavenCentral") -> "$module:publishToMavenCentral"
                         hasTask(moduleProject, "publish") -> "$module:publish"
                         else -> null
                     }
