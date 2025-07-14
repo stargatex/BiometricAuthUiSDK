@@ -8,7 +8,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8"
+  GRADLE_OPTS: >
+    -Dorg.gradle.daemon=false
+    -Dorg.gradle.parallel=true
+    -Dorg.gradle.jvmargs="-Xmx8192M -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -Dkotlin.daemon.jvm.options=\"-Xmx8192M\""
 
 jobs:
   generate-docs:
@@ -19,17 +22,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Restore Gradle cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-cache-${{ runner.os }}-
+
+      - name: Restore Kotlin/Native cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.konan/cache
+          key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
+          restore-keys: kotlin-native-cache-${{ runner.os }}-
+
+
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+#      - name: Setup Gradle
+#        uses: gradle/gradle-build-action@v2
 
       - name: Generate documentation
         run: ./gradlew dokkaAllLibraries --no-daemon --stacktrace
+
+      - name: Save Kotlin/Native cache
+        if: ${{ always() }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.konan/cache
+          key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
+
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3

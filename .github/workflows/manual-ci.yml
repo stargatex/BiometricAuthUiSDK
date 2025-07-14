@@ -60,24 +60,24 @@ jobs:
     uses: ./.github/workflows/publish-release.yml
     secrets: inherit
 
----
-
-name: Manual Documentation
-
-on:
-  workflow_dispatch:
-    inputs:
-      deploy-to-pages:
-        description: 'Deploy to GitHub Pages'
-        type: boolean
-        default: true
-
-concurrency:
-  group: '${{ github.workflow }}-${{ github.actor }}'
-  cancel-in-progress: true
-
-jobs:
-  generate-docs:
-    name: Generate Documentation
-    uses: ./.github/workflows/documentation.yml
-    secrets: inherit
+#---
+#
+#name: Manual Documentation
+#
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      deploy-to-pages:
+#        description: 'Deploy to GitHub Pages'
+#        type: boolean
+#        default: true
+#
+#concurrency:
+#  group: '${{ github.workflow }}-${{ github.actor }}'
+#  cancel-in-progress: true
+#
+#jobs:
+#  generate-docs:
+#    name: Generate Documentation
+#    uses: ./.github/workflows/documentation.yml
+#    secrets: inherit

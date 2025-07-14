@@ -17,8 +17,7 @@ plugins {
 sdkManagement {
 
     modules(
-        ":biometricLockSdk",
-        ":pinLockUISdk"
+        ":biometricLockSdk"
     )
 
     // autoDetectSdkModules(project)
