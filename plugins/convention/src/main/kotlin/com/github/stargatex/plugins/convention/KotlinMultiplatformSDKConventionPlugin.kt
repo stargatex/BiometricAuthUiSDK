@@ -129,10 +129,19 @@ class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
             publishToMavenCentral()
 
             val gpgKey = localProps.getProperty("gpgKeySecret")
+                ?: localProps.getProperty("signing.key")
+                ?: findProperty("signing.key") as? String
+                ?: System.getenv("GPG_KEY_SECRET")
+
             val gpgPass = localProps.getProperty("gpgKeyPassword")
+                ?: localProps.getProperty("signing.keyPassword")
+                ?: findProperty("signing.keyPassword") as? String
+                ?: System.getenv("GPG_KEY_PASSWORD")
 
             if (!gpgKey.isNullOrBlank() && !gpgPass.isNullOrBlank()) {
                 signAllPublications()
+            } else {
+                project.logger.warn("GPG signing credentials not found. Publications will not be signed.")
             }
 
             pom {

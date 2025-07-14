@@ -57,12 +57,12 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Create local.properties
+      - name: Set publishing properties
         run: |
-          echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> local.properties
-          echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> local.properties
-          echo "gpgKeySecret=${{ secrets.GPG_KEY_SECRET }}" >> local.properties
-          echo "gpgKeyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> local.properties
+          echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> gradle.properties
+          echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> gradle.properties
+          echo "signing.key=${{ secrets.GPG_KEY_SECRET }}" >> gradle.properties
+          echo "signing.keyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> gradle.properties
 
       - name: Set release version
         run: |
@@ -106,6 +106,13 @@ jobs:
       - name: Clean up
         if: always()
         run: rm -f local.properties
+
+      - name: Clean up
+        if: always()
+        run: |
+          # Remove sensitive properties from gradle.properties
+          sed -i.bak '/mavenCentralUsername=/d; /mavenCentralPassword=/d; /signing.key=/d; /signing.keyPassword=/d' gradle.properties
+          rm -f gradle.properties.bak
 
       - name: Notify on success
         if: success()
