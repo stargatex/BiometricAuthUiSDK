@@ -33,6 +33,17 @@ kotlin {
         }
 
     }
+
+    kotlin {
+        targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().configureEach {
+            compilations.all {
+                kotlinOptions.freeCompilerArgs += listOf(
+                    "-Xbinary=gc=stwms",
+                    "-Xverify-ir=none"
+                )
+            }
+        }
+    }
     
     sourceSets {
         
