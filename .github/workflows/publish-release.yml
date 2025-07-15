@@ -1,0 +1,140 @@
+name: Publish Release
+
+on:
+  workflow_call:
+    secrets:
+      MAVEN_CENTRAL_USERNAME:
+        required: true
+      MAVEN_CENTRAL_PASSWORD:
+        required: true
+      GPG_KEY_SECRET:
+        required: true
+      GPG_KEY_PASSWORD:
+        required: true
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx8192M -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -Dkotlin.daemon.jvm.options=-Xmx8192M
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish Release to SonarType Central
+    runs-on: macos-latest
+    environment: publish
+    env:
+      ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_SECRET }}
+      ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore Gradle cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-cache-${{ runner.os }}-
+
+      - name: Restore Kotlin/Native cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.konan/cache
+          key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
+          restore-keys: kotlin-native-cache-${{ runner.os }}-
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+#      - name: Setup Gradle
+#        uses: gradle/gradle-build-action@v2
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+#      - name: Set publishing properties
+#        run: |
+#          echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> gradle.properties
+#          echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> gradle.properties
+#          echo "signing.key=${{ secrets.GPG_KEY_SECRET }}" >> gradle.properties
+#          echo "signing.keyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> gradle.properties
+
+      - name: Set release version
+        run: |
+          echo "releaseVersion=${{ steps.get_version.outputs.VERSION }}" >> gradle.properties
+
+      - name: Prepare release
+        run: ./gradlew prepareRelease --no-daemon --stacktrace
+
+      - name: Publish release to SonarType Central
+        run: ./gradlew publishAllLibraries --no-configuration-cache --no-daemon --stacktrace
+
+      - name: Save Kotlin/Native cache
+        if: ${{ always() }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.konan/cache
+          key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_OUTPUT
+            awk '/## \[${{ steps.get_version.outputs.VERSION }}\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "CHANGELOG_CONTENT=Release ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.changelog.outputs.CHANGELOG_CONTENT }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          append_body: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clean up
+        if: always()
+        run: rm -f local.properties
+
+#      - name: Clean up
+#        if: always()
+#        run: |
+#          # Remove sensitive properties from gradle.properties
+#          sed -i.bak '/mavenCentralUsername=/d; /mavenCentralPassword=/d; /signing.key=/d; /signing.keyPassword=/d' gradle.properties
+#          rm -f gradle.properties.bak
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "Release ${{ steps.get_version.outputs.VERSION }} published successfully!"
+          echo "SonarType Central: Published"
+          echo "GitHub Release: Created"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Release publication failed"
+          echo "Version: ${{ steps.get_version.outputs.VERSION }}"
+          echo "Please check the logs above for details"

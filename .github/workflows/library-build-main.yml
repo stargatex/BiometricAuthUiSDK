@@ -1,0 +1,56 @@
+name: Biometric KMP Library CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx8192M -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -Dkotlin.daemon.jvm.options=-Xmx8192M
+
+jobs:
+  #Validation job
+  validate:
+    name: Validate Gradle Wrapper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1
+
+  # Core CI pipeline
+  ci-pipeline:
+    name: Run CI Pipeline
+    needs: validate
+    uses: ./.github/workflows/ci-pipeline.yml
+    secrets: inherit
+
+  publish-snapshot:
+    name: Publish Snapshot
+    needs: ci-pipeline
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    uses: ./.github/workflows/publish-snapshot.yml
+    secrets: inherit
+
+  publish-release:
+    name: Publish Release
+    needs: ci-pipeline
+    if: startsWith(github.ref, 'refs/tags/v')
+    uses: ./.github/workflows/publish-release.yml
+    secrets: inherit
+
+#  generate-docs:
+#    name: Generate Documentation
+#    needs: ci-pipeline
+#    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#    uses: ./.github/workflows/documentation.yml
+#    secrets: inherit

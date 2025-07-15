@@ -16,6 +16,13 @@ junit = "4.13.2"
 koinCompose = "4.1.0"
 kotlin = "2.1.21"
 kotlinxCoroutinesCore = "1.10.2"
+swiftklib = "0.6.4"
+dokka = "2.0.0"
+vanniktech-maven = "0.33.0"
+binary-compatibility-validator= "0.18.1"
+
+kvault = "1.10.0"
+napier = "2.7.1"
 
 [libraries]
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
@@ -36,9 +43,28 @@ androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:life
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 
+common-main-pref-store = { group = "com.liftric", name = "kvault", version.ref = "kvault" }
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+dokka-gradlePlugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
+vanniktech-gradlePlugin = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "vanniktech-maven" }
+binary-compatibility-validator-gradlePlugin = { group = "org.jetbrains.kotlinx", name = "binary-compatibility-validator", version.ref = "binary-compatibility-validator" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+swiftklib = { id = "io.github.ttypic.swiftklib", version.ref = "swiftklib" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+vanniktech-maven = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-maven" }
+binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binary-compatibility-validator" }
+
+
+# Plugins defined by this project
+stargatex-kotlin-multiplatform-sdk = { id = "stargatex.convention.kotlin.multiplatform.sdk" }
+stargatex-kotlin-multiplatform-build-management = { id = "stargatex.convention.kotlin.multiplatform.build.management" }

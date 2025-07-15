@@ -1,0 +1,103 @@
+name: Publish Snapshot
+
+on:
+  workflow_call:
+    secrets:
+      MAVEN_CENTRAL_USERNAME:
+        required: true
+      MAVEN_CENTRAL_PASSWORD:
+        required: true
+      GPG_KEY_SECRET:
+        required: true
+      GPG_KEY_PASSWORD:
+        required: true
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.ref }}'
+  cancel-in-progress: false
+
+env:
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs=-Xmx8192M -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -Dkotlin.daemon.jvm.options=-Xmx8192M
+
+jobs:
+  publish:
+    name: Publish Snapshot to SonarType Central
+    runs-on: macos-latest
+    environment: publish
+    env:
+      ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+      ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.GPG_KEY_SECRET }}
+      ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.GPG_KEY_PASSWORD }}
+      IS_SNAPSHOT: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore Gradle cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-cache-${{ runner.os }}-
+
+      - name: Restore Kotlin/Native cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.konan/cache
+          key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
+          restore-keys: kotlin-native-cache-${{ runner.os }}-
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+#      - name: Setup Gradle
+#        uses: gradle/gradle-build-action@v2
+
+      #      - name: Set publishing properties
+      #        run: |
+      #          echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> gradle.properties
+      #          echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> gradle.properties
+      #          echo "signing.key=${{ secrets.GPG_KEY_SECRET }}" >> gradle.properties
+      #          echo "signing.keyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> gradle.properties
+      #          echo "isSnapshot=true" >> gradle.properties
+
+      - name: Publish snapshot to SonarType Central
+        run: ./gradlew publishAllLibraries --no-configuration-cache --no-daemon --stacktrace
+
+      - name: Save Kotlin/Native cache
+        if: ${{ always() }}
+        uses: actions/cache@v3
+        with:
+          path: ~/.konan/cache
+          key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
+
+      - name: Clean up
+        if: always()
+        run: rm -f local.properties
+
+      #      - name: Clean up
+      #        if: always()
+      #        run: |
+      #          # Remove sensitive properties from gradle.properties
+      #          sed -i.bak '/mavenCentralUsername=/d; /mavenCentralPassword=/d; /signing.key=/d; /signing.keyPassword=/d' gradle.properties
+      #          rm -f gradle.properties.bak
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "Snapshot published successfully to SonarType Central"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Snapshot publication failed"
+          echo "Please check the logs above for details"
