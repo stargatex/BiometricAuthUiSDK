@@ -2,6 +2,11 @@ name: Publish Release
 
 on:
   workflow_call:
+    inputs:
+      version:
+        description: 'Version to publish (optional, will extract from tag if not provided)'
+        required: false
+        type: string
     secrets:
       MAVEN_CENTRAL_USERNAME:
         required: true
@@ -38,7 +43,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Restore Gradle cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -47,7 +52,7 @@ jobs:
           restore-keys: gradle-cache-${{ runner.os }}-
 
       - name: Restore Kotlin/Native cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.konan/cache
           key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
@@ -59,19 +64,50 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-#      - name: Setup Gradle
-#        uses: gradle/gradle-build-action@v2
-
-      - name: Extract version from tag
+      - name: Determine version
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            # Use manually provided version
+            echo "VERSION=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "SOURCE=manual" >> $GITHUB_OUTPUT
+            echo "Using manual version: ${{ inputs.version }}"
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            # Extract from tag
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+            echo "SOURCE=tag" >> $GITHUB_OUTPUT
+            echo "Using tag version: $VERSION"
+          else
+            echo "Error: No version provided and not triggered by tag"
+            exit 1
+          fi
 
-#      - name: Set publishing properties
-#        run: |
-#          echo "mavenCentralUsername=${{ secrets.MAVEN_CENTRAL_USERNAME }}" >> gradle.properties
-#          echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> gradle.properties
-#          echo "signing.key=${{ secrets.GPG_KEY_SECRET }}" >> gradle.properties
-#          echo "signing.keyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> gradle.properties
+      - name: Validate version format
+        run: |
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+            echo "Error: Invalid version format: $VERSION"
+            echo "Expected format: X.Y.Z or X.Y.Z-suffix"
+            exit 1
+          fi
+          echo "Version format is valid: $VERSION"
+
+      - name: Check if version exists in changelog
+        id: check_changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            if grep -q "## \[${{ steps.get_version.outputs.VERSION }}\]" CHANGELOG.md; then
+              echo "CHANGELOG_EXISTS=true" >> $GITHUB_OUTPUT
+              echo "Found changelog entry for version ${{ steps.get_version.outputs.VERSION }}"
+            else
+              echo "CHANGELOG_EXISTS=false" >> $GITHUB_OUTPUT
+              echo "Warning: No changelog entry found for version ${{ steps.get_version.outputs.VERSION }}"
+            fi
+          else
+            echo "CHANGELOG_EXISTS=false" >> $GITHUB_OUTPUT
+            echo "Warning: CHANGELOG.md not found"
+          fi
 
       - name: Set release version
         run: |
@@ -85,7 +121,7 @@ jobs:
 
       - name: Save Kotlin/Native cache
         if: ${{ always() }}
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.konan/cache
           key: kotlin-native-cache-${{ runner.os }}-${{ hashFiles('**/*.kt', '**/*.kts', '**/*.def') }}
@@ -93,24 +129,34 @@ jobs:
       - name: Generate changelog
         id: changelog
         run: |
-          if [ -f CHANGELOG.md ]; then
+          if [ -f CHANGELOG.md ] && [ "${{ steps.check_changelog.outputs.CHANGELOG_EXISTS }}" = "true" ]; then
             echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_OUTPUT
-            awk '/## \[${{ steps.get_version.outputs.VERSION }}\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md >> $GITHUB_OUTPUT
+            changelog_content=$(awk '/## \[${{ steps.get_version.outputs.VERSION }}\]/{flag=1; next} /## \[/{flag=0} flag' CHANGELOG.md)
+            if [ -n "$changelog_content" ]; then
+              echo "$changelog_content" >> $GITHUB_OUTPUT
+            else
+              echo "Release ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+            fi
             echo "EOF" >> $GITHUB_OUTPUT
           else
-            echo "CHANGELOG_CONTENT=Release ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+            echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_OUTPUT
+            echo "Release ${{ steps.get_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+            echo "" >> $GITHUB_OUTPUT
+            echo "Published from: ${{ steps.get_version.outputs.SOURCE }}" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
           fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ steps.get_version.outputs.SOURCE == 'manual' && format('v{0}', steps.get_version.outputs.VERSION) || github.ref }}
           name: Release ${{ steps.get_version.outputs.VERSION }}
           body: ${{ steps.changelog.outputs.CHANGELOG_CONTENT }}
           draft: false
           prerelease: false
           generate_release_notes: true
           append_body: true
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -118,23 +164,19 @@ jobs:
         if: always()
         run: rm -f local.properties
 
-#      - name: Clean up
-#        if: always()
-#        run: |
-#          # Remove sensitive properties from gradle.properties
-#          sed -i.bak '/mavenCentralUsername=/d; /mavenCentralPassword=/d; /signing.key=/d; /signing.keyPassword=/d' gradle.properties
-#          rm -f gradle.properties.bak
-
       - name: Notify on success
         if: success()
         run: |
           echo "Release ${{ steps.get_version.outputs.VERSION }} published successfully!"
+          echo "Version source: ${{ steps.get_version.outputs.SOURCE }}"
           echo "SonarType Central: Published"
           echo "GitHub Release: Created"
+          echo "Git Tag: v${{ steps.get_version.outputs.VERSION }} (created by GitHub Release action)"
 
       - name: Notify on failure
         if: failure()
         run: |
           echo "Release publication failed"
           echo "Version: ${{ steps.get_version.outputs.VERSION }}"
+          echo "Version source: ${{ steps.get_version.outputs.SOURCE }}"
           echo "Please check the logs above for details"
