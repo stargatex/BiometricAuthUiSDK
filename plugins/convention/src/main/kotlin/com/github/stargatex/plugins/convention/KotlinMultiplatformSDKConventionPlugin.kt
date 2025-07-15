@@ -1,5 +1,6 @@
 package com.github.stargatex.plugins.convention
 
+import com.github.stargatex.plugins.extension.KotlinMultiplatformSDKConventionExtension
 import com.github.stargatex.plugins.extension.getCustomArtifactId
 import com.github.stargatex.plugins.extension.localProperties
 import com.github.stargatex.plugins.extension.shouldSkipProject
@@ -11,7 +12,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import com.github.stargatex.plugins.extension.KotlinMultiplatformSDKConventionExtension
 
 /**
  * @author Lahiru Jayawickrama (lahirujay)
@@ -92,10 +92,10 @@ class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
 
 
         val isSnapshot = project.findProperty("isSnapshot") as? String == "true"
+                || System.getenv("IS_SNAPSHOT") == "true"
         if (isSnapshot) {
             return "${extension.baseVersion}-SNAPSHOT"
         }
-
 
         return extension.baseVersion
     }
@@ -131,12 +131,12 @@ class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
             val gpgKey = localProps.getProperty("gpgKeySecret")
                 ?: localProps.getProperty("signing.key")
                 ?: findProperty("signing.key") as? String
-                ?: System.getenv("GPG_KEY_SECRET")
+                ?: System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKey")
 
             val gpgPass = localProps.getProperty("gpgKeyPassword")
                 ?: localProps.getProperty("signing.keyPassword")
                 ?: findProperty("signing.keyPassword") as? String
-                ?: System.getenv("GPG_KEY_PASSWORD")
+                ?: System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
 
             if (!gpgKey.isNullOrBlank() && !gpgPass.isNullOrBlank()) {
                 signAllPublications()
