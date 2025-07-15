@@ -1,0 +1,33 @@
+name: Manual Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish-type:
+        description: 'Publication type'
+        required: true
+        type: choice
+        options:
+          - snapshot
+          - release
+      version:
+        description: 'Version to publish'
+        required: false
+        type: string
+
+concurrency:
+  group: '${{ github.workflow }}-${{ inputs.publish-type }}-${{ github.actor }}'
+  cancel-in-progress: false
+
+jobs:
+  publish-snapshot:
+    name: Publish Snapshot
+    if: inputs.publish-type == 'snapshot'
+    uses: ./.github/workflows/publish-snapshot.yml
+    secrets: inherit
+
+  publish-release:
+    name: Publish Release
+    if: inputs.publish-type == 'release'
+    uses: ./.github/workflows/publish-release.yml
+    secrets: inherit
