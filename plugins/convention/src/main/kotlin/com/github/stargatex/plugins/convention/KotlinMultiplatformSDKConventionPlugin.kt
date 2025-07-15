@@ -139,9 +139,15 @@ class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
                 ?: System.getenv("ORG_GRADLE_PROJECT_signingInMemoryKeyPassword")
 
             if (!gpgKey.isNullOrBlank() && !gpgPass.isNullOrBlank()) {
-                signAllPublications()
+                try {
+                    signAllPublications()
+                    project.logger.info("Signing configured for ${project.name}")
+                } catch (e: Exception) {
+                    project.logger.warn("Failed to configure signing for ${project.name}: ${e.message}")
+                }
             } else {
-                project.logger.warn("GPG signing credentials not found. Publications will not be signed.")
+                project.logger.warn("GPG signing credentials not found for ${project.name}. Publications will not be signed.")
+                project.logger.debug("GPG Key present: ${!gpgKey.isNullOrBlank()}, GPG Password present: ${!gpgPass.isNullOrBlank()}")
             }
 
             pom {
