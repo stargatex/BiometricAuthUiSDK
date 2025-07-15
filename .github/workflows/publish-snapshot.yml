@@ -59,9 +59,6 @@ jobs:
           echo "mavenCentralPassword=${{ secrets.MAVEN_CENTRAL_PASSWORD }}" >> gradle.properties
           echo "signing.key=${{ secrets.GPG_KEY_SECRET }}" >> gradle.properties
           echo "signing.keyPassword=${{ secrets.GPG_KEY_PASSWORD }}" >> gradle.properties
-
-      - name: Set snapshot version
-        run: |
           echo "isSnapshot=true" >> gradle.properties
 
       - name: Publish snapshot to SonarType Central
