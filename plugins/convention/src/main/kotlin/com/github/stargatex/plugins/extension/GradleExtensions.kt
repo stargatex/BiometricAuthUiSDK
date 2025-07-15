@@ -28,7 +28,7 @@ internal fun MavenPublication.getCustomArtifactId(
     }
 
     return when (project.name) {
-        "biometricLockSdk" -> if (name == "kotlinMultiplatform") "bimetriclock" else "bimetriclock-$name"
+        "biometricLockSdk" -> if (name == "kotlinMultiplatform") "biometriclock" else "biometriclock-$name"
         "pinLockUISdk" -> if (name == "kotlinMultiplatform") "pinlock" else "pinlock-$name"
         else -> if (name == "kotlinMultiplatform") "biometricauth" else "biometricauth-$name"
     }

@@ -19,7 +19,7 @@ open class KotlinMultiplatformSDKConventionExtension {
     var publishSources: Boolean = false
 
     var customArtifactIds: Map<String, String> = mapOf(
-        "biometricLockSdk" to "bimetriclock",
+        "biometricLockSdk" to "biometriclock",
         "pinLockUISdk" to "pinlock"
     )
 
