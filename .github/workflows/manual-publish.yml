@@ -1,0 +1,68 @@
+name: Manual Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish-type:
+        description: 'Publication type'
+        required: true
+        type: choice
+        options:
+          - snapshot
+          - release
+      version:
+        description: 'Version to publish (for release: X.Y.Z format, for snapshot: optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  
+concurrency:
+  group: '${{ github.workflow }}-${{ inputs.publish-type }}-${{ github.actor }}'
+  cancel-in-progress: false
+
+jobs:
+  validate-inputs:
+    name: Validate Inputs
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.validate.outputs.version }}
+    steps:
+      - name: Validate version input
+        id: validate
+        run: |
+          if [ "${{ inputs.publish-type }}" = "release" ]; then
+            if [ -z "${{ inputs.version }}" ]; then
+              echo "Error: Version is required for release publication"
+              exit 1
+            fi
+          
+            VERSION="${{ inputs.version }}"
+            if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?$ ]]; then
+              echo "Error: Invalid version format: $VERSION"
+              echo "Expected format: X.Y.Z or X.Y.Z-suffix"
+              exit 1
+            fi
+          
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Valid release version: $VERSION"
+          else
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "Snapshot publication - version: ${{ inputs.version || 'auto-generated' }}"
+          fi
+
+  publish-snapshot:
+    name: Publish Snapshot
+    if: inputs.publish-type == 'snapshot'
+    uses: ./.github/workflows/publish-snapshot.yml
+    secrets: inherit
+
+  publish-release:
+    name: Publish Release
+    if: inputs.publish-type == 'release'
+    needs: validate-inputs
+    uses: ./.github/workflows/publish-release.yml
+    with:
+      version: ${{ needs.validate-inputs.outputs.version }}
+    secrets: inherit
