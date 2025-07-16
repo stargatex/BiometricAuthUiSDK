@@ -2,10 +2,28 @@ name: Biometric KMP Library CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
-    tags: [ 'v*' ]
-  pull_request:
     branches: [ main ]
+    tags: [ 'v*' ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
+      - '.github/workflows/**.yml'
+
+  pull_request:
+    types: [ opened, synchronize ]
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
+      - '.github/workflows/**.yml'
 
 permissions:
   contents: write
@@ -37,12 +55,12 @@ jobs:
     uses: ./.github/workflows/ci-pipeline.yml
     secrets: inherit
 
-  publish-snapshot:
-    name: Publish Snapshot
-    needs: ci-pipeline
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-    uses: ./.github/workflows/publish-snapshot.yml
-    secrets: inherit
+#  publish-snapshot:
+#    name: Publish Snapshot
+#    needs: ci-pipeline
+#    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+#    uses: ./.github/workflows/publish-snapshot.yml
+#    secrets: inherit
 
   publish-release:
     name: Publish Release
