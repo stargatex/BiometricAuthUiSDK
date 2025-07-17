@@ -20,10 +20,6 @@ public final class com/stargatex/mobile/lib/pinauth/di/AndroidPlatformContextPro
 	public fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
 }
 
-public final class com/stargatex/mobile/lib/pinauth/di/AppModuleKt {
-	public static final fun libMainModule (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;)Lorg/koin/core/module/Module;
-}
-
 public final class com/stargatex/mobile/lib/pinauth/di/FakeAndroidPlatformContextProvider : com/stargatex/mobile/lib/pinauth/di/PlatformContextProvider {
 	public static final field $stable I
 	public fun <init> ()V
