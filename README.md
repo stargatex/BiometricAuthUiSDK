@@ -62,11 +62,11 @@ fun BioKeyX.Compose(
   platformContextProvider: PlatformContextProvider, // Provides platform-specific context
   shouldCheckAvailability: Boolean = true,          // Check for biometric availability first
   lockConfig: LockConfig = LockConfig(...),         // Customize prompt appearance & behavior
-uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig(...), // Customize UI text
-onAuthSuccess: () -> Unit,                        // Called on successful authentication
-onNoEnrollment: () -> Unit,                       // Called if no biometrics are enrolled
-onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., PIN)
-onAuthFailure: (String) -> Unit                   // Called on authentication failure
+  uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig(...), // Customize UI text
+  onAuthSuccess: () -> Unit,                        // Called on successful authentication
+  onNoEnrollment: () -> Unit,                       // Called if no biometrics are enrolled
+  onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., PIN)
+  onAuthFailure: (String) -> Unit                   // Called on authentication failure
 )
 ```
 
@@ -280,10 +280,10 @@ fun PINKeyX.Compose(
   platformContextProvider: PlatformContextProvider, // Provides platform-specific context
   shouldCheckAvailability: Boolean = true,          // Check for PIN availability/setup
   lockConfig: LockConfig = LockConfig(...),         // Customize PIN
-uiTextConfig: PinUiTextConfig = PinUiTextConfig(...), // Customize UI text
-onAuthSuccess: () -> Unit,                        // Called on successful PIN auth
-onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., Biometric)
-onAuthFailure: (String) -> Unit                   // Called on PIN auth failure
+  uiTextConfig: PinUiTextConfig = PinUiTextConfig(...), // Customize UI text
+  onAuthSuccess: () -> Unit,                        // Called on successful PIN auth
+  onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., Biometric)
+  onAuthFailure: (String) -> Unit                   // Called on PIN auth failure
 ){}
 
 ```
