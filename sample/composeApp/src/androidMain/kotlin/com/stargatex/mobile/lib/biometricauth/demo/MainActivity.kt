@@ -50,9 +50,7 @@ fun BiometricWrapperScreen(
     ) { result ->
         Log.d("BiometricWrapperScreen", " Enroll Result $result")
         hasLaunchedEnrollment = false
-        //if (result.resultCode == Activity.RESULT_OK) {
         shouldCheck = true
-        //}
     }
 
     SampleApp(
