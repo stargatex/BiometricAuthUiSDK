@@ -29,10 +29,22 @@ import com.stargatex.mobile.lib.pinlock.resources.Res
 import com.stargatex.mobile.lib.pinlock.resources.pin_confirm_pin
 import com.stargatex.mobile.lib.pinlock.resources.pin_enter_pin
 import com.stargatex.mobile.lib.pinlock.resources.pin_set_new_pin
+import io.github.aakira.napier.Napier
 import org.jetbrains.compose.resources.stringResource
 
 
 /**
+ * Composable function for the PIN verification screen.
+ * This screen handles PIN entry, validation, and communicates UI events.
+ *
+ * @param verifyViewModel The ViewModel responsible for PIN verification logic and UI state.
+ * @param shouldCheckAvailability Boolean flag to indicate if PIN availability should be checked (Not currently used in this composable directly but passed to ViewModel logic). Defaults to `true`.
+ * @param lockConfig Configuration for lock behavior, such as PIN prompt settings. Defaults to `LockConfig(PinPromptConfig.default())`.
+ * @param uiTextConfig Configuration for UI text elements, like screen titles and notes. Defaults to `PinUiTextConfig.default()`.
+ * @param onUnlockSuccess Callback invoked when PIN verification is successful. Defaults to an empty lambda.
+ * @param onFallback Callback invoked for fallback scenarios (Not currently used in this composable directly but passed to ViewModel logic). Defaults to an empty lambda.
+ * @param onAuthFailure Callback invoked when authentication fails, providing an error message. Defaults to an empty lambda.
+ *
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
@@ -67,7 +79,7 @@ internal fun PinVerifyScreen(
                 is PinUiEvent.Error -> errorMessage = event.message
                 is PinUiEvent.Success -> {
                     onUnlockSuccess()
-                    errorMessage = "onUnlockSuccess"
+                    errorMessage = "Unlock Success"
                 }
             }
         }
@@ -94,7 +106,7 @@ internal fun PinVerifyScreen(
         NumericKeyPad(
             modifier = Modifier.fillMaxWidth(),
             onNumericKeyClick = {
-                println("Pressed $it")
+                Napier.d("Pressed $it")
                 updatePin(pin + it.toString())
             },
             onBackSpaceClick = {

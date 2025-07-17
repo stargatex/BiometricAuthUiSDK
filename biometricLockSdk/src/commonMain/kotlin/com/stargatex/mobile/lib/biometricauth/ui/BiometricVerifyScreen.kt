@@ -23,10 +23,28 @@ import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
 import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextConfig
 
 /**
+ * A composable screen that handles biometric verification.
+ * It checks for biometric availability, displays appropriate messages,
+ * and initiates the authentication process. It also handles various
+ * outcomes of the authentication attempt.
+ *
+ * @param verifyViewModel The [BiometricVerifyViewModel] used to manage biometric state and actions.
+ * @param shouldCheckAvailability A boolean indicating whether to check for biometric availability
+ *                                 when the screen is launched. Defaults to `true`.
+ * @param lockConfig The [LockConfig] to be used for biometric authentication.
+ *                   Defaults to a [LockConfig] with the default [BiometricPromptConfig].
+ * @param uiTextConfig The [BiometricUiTextConfig] to customize the text displayed on the screen.
+ *                     Defaults to [BiometricUiTextConfig.default].
+ * @param onAuthSuccess A lambda function to be invoked when biometric authentication is successful.
+ * @param onNoEnrollment A lambda function to be invoked if no biometrics are enrolled on the device.
+ * @param onFallback A lambda function to be invoked if biometric hardware is not available,
+ *                   allowing for an alternative authentication method.
+ * @param onAuthFailure A lambda function to be invoked when biometric authentication fails,
+ *                      providing an error message string.
+ *
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
  */
-
 @Composable
 internal fun BiometricVerifyScreen(
     verifyViewModel: BiometricVerifyViewModel,

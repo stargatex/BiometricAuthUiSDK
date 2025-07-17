@@ -13,14 +13,13 @@ import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 
-/**
- * @author Lahiru Jayawickrama (stargatex)
- * @version 1.0.0
- */
 
 /**
  * Facade for interacting with the PINKeyX library.
  * This interface provides methods for composing the PIN authentication UI and clearing the PIN store.
+ *
+ * @author Lahiru Jayawickrama (stargatex)
+ * @version 1.0.0
  */
 public interface PINKeyXFacade {
     /**

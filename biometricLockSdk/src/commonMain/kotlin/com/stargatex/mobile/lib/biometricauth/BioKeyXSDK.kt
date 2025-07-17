@@ -12,16 +12,33 @@ import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextCon
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 
-/**
- * @author Lahiru Jayawickrama (stargatex)
- * @version 1.0.0
- */
 
 /**
  * Facade for the BioKeyX SDK, providing a Composable function to integrate biometric authentication.
  * This interface defines the entry point for using the BioKeyX SDK within a Jetpack Compose UI.
+ *
+ * @author Lahiru Jayawickrama (stargatex)
+ * @version 1.0.0
  */
 public interface BioKeyXFacade {
+    /**
+     * Composable function that provides the biometric authentication UI.
+     *
+     * This function is the main entry point for integrating biometric authentication into a Compose UI.
+     * It handles the display of the biometric prompt and manages the authentication flow.
+     *
+     * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+     * @param shouldCheckAvailability A boolean flag indicating whether to check for biometric availability
+     * before attempting authentication. Defaults to `true`.
+     * @param lockConfig Configuration for the biometric lock, including settings for the biometric prompt.
+     * Defaults to [LockConfig] with [BiometricPromptConfig.default].
+     * @param uiTextConfig Configuration for the UI text elements displayed during the authentication process.
+     * Defaults to [BiometricUiTextConfig.default].
+     * @param onAuthSuccess Callback invoked when biometric authentication is successful.
+     * @param onNoEnrollment Callback invoked if no biometric credentials are enrolled on the device.
+     * @param onFallback Callback invoked if the user chooses to use a fallback authentication method (e.g., PIN, pattern).
+     * @param onAuthFailure Callback invoked when biometric authentication fails. It provides an error message string.
+     */
     @Composable
     public fun Compose(
         platformContextProvider: PlatformContextProvider,
