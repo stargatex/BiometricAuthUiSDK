@@ -331,7 +331,7 @@ fun PinProtectedScreen(activity: AppCompatActivity) { // Pass the activity
         // Example LockConfig, customize as needed
         lockConfig = LockConfig(pinPromptConfig = PinPromptConfig.default()),
         // Example UiTextConfig, customize as needed
-        uiTextConfig = PinUiTextConfig.default().copy(title = "Enter Your Secure PIN"),
+        uiTextConfig = PinUiTextConfig.default().copy(screenTitle = "Enter Your Secure PIN"),
         onAuthSuccess = {
           authStatus = "PIN Authentication Successful!"
           showPinScreen = false
