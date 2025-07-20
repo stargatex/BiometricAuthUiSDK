@@ -6,11 +6,11 @@ package com.github.stargatex.plugins.extension
  */
 open class KotlinMultiplatformSDKConventionExtension {
     var groupId: String = "io.github.stargatex.mobile.lib"
-    var baseVersion: String = "1.0.0"
+    var baseVersion: String = "1.1.0"
     var description: String = "Biometric Auth and Custom PIN Kotlin Multiplatform UI SDK"
     var gitUrl: String = "https://github.com/stargatex/BiometricAuthUiSDK"
     var developerName: String = "Lahiru J"
-    var developerEmail: String = "lahirudevx@gmail.com"
+    var developerEmail: String = ""
 
     var enableAndroidTarget: Boolean = true
     var enableIosTargets: Boolean = true

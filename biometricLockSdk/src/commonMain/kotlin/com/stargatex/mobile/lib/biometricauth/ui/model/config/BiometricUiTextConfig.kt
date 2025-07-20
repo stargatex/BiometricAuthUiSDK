@@ -16,6 +16,23 @@ import com.stargatex.mobile.lib.bimetriclock.resources.biometric_unknown
 import org.jetbrains.compose.resources.stringResource
 
 /**
+ * Configuration class for UI text elements in biometric authentication.
+ *
+ * This data class holds the string resources for various states and messages
+ * displayed to the user during the biometric authentication process.
+ *
+ * @property screenTitle The title displayed on the biometric authentication screen.
+ * @property available Message indicating biometric authentication is available.
+ * @property noEnrollment Message indicating no biometrics are enrolled on the device.
+ * @property hardwareUnavailable Message indicating biometric hardware is currently unavailable.
+ * @property noHardware Message indicating the device does not have biometric hardware.
+ * @property unknown Message for an unknown biometric authentication state or error.
+ * @property authSuccess Message displayed upon successful biometric authentication.
+ * @property authFailed Message displayed upon failed biometric authentication.
+ * @property authCancelled Message displayed if biometric authentication is cancelled by the user.
+ * @property authExhausted Message displayed when biometric authentication attempts are exhausted.
+ * @property errorPrefix Prefix used for displaying detailed error messages.
+ *
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
@@ -33,6 +50,14 @@ public data class BiometricUiTextConfig(
     val errorPrefix: String
 ) {
     public companion object {
+        /**
+         * Creates a [BiometricUiTextConfig] with default string resources.
+         *
+         * This function is composable and should be called from within a composable context.
+         * It retrieves localized strings for various biometric authentication states and messages.
+         *
+         * @return A [BiometricUiTextConfig] instance populated with default localized strings.
+         */
         @Composable
         public fun default(): BiometricUiTextConfig = BiometricUiTextConfig(
             screenTitle = stringResource(Res.string.biometric_screen_title),

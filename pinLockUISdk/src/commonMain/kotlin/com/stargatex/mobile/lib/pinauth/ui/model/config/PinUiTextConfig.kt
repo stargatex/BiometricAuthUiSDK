@@ -9,6 +9,13 @@ import com.stargatex.mobile.lib.pinlock.resources.pin_screen_title
 import org.jetbrains.compose.resources.stringResource
 
 /**
+ * Data class representing the text configuration for the PIN UI.
+ * This class holds the customizable text elements displayed on the PIN entry screen.
+ *
+ * @property screenTitle The title displayed at the top of the PIN screen.
+ * @property screenNote A descriptive note or instruction displayed below the title.
+ * @property errorPrefix A prefix string used for displaying error messages.
+ *
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
@@ -18,6 +25,12 @@ public data class PinUiTextConfig(
     val errorPrefix: String
 ) {
     public companion object {
+        /**
+         * Creates a default [PinUiTextConfig] with localized strings for the screen title, note, and error prefix.
+         * This function should be called within a Composable context to access string resources.
+         *
+         * @return A [PinUiTextConfig] instance with default text values.
+         */
         @Composable
         public fun default(): PinUiTextConfig = PinUiTextConfig(
             screenTitle = stringResource(Res.string.pin_screen_title),
