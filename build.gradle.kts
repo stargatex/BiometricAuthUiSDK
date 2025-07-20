@@ -17,6 +17,7 @@ plugins {
 sdkManagement {
 
     modules(
+        ":biometricLockSdk",
         ":pinLockUISdk"
     )
 
