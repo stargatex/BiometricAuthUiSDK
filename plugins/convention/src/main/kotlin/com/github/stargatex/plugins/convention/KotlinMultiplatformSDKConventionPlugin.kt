@@ -165,7 +165,7 @@ class KotlinMultiplatformSDKConventionPlugin : Plugin<Project> {
                 developers {
                     developer {
                         name.set(extension.developerName)
-                        email.set(extension.developerEmail)
+                        //email.set(extension.developerEmail)
                     }
                 }
 

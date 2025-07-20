@@ -10,7 +10,7 @@ open class KotlinMultiplatformSDKConventionExtension {
     var description: String = "Biometric Auth and Custom PIN Kotlin Multiplatform UI SDK"
     var gitUrl: String = "https://github.com/stargatex/BiometricAuthUiSDK"
     var developerName: String = "Lahiru J"
-    var developerEmail: String = "lahirudevx@gmail.com"
+    var developerEmail: String = ""
 
     var enableAndroidTarget: Boolean = true
     var enableIosTargets: Boolean = true
