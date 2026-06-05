@@ -5,6 +5,7 @@ import androidx.compose.runtime.DisposableEffect
 import com.stargatex.mobile.lib.pinauth.di.PinAuthLibDI
 import com.stargatex.mobile.lib.pinauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.domain.model.LockConfig
+import com.stargatex.mobile.lib.pinauth.domain.model.PinMode
 import com.stargatex.mobile.lib.pinauth.domain.model.PinPromptConfig
 import com.stargatex.mobile.lib.pinauth.domain.usecase.ClearPINUseCase
 import com.stargatex.mobile.lib.pinauth.domain.usecase.FetchSavedPINUseCase
@@ -13,6 +14,7 @@ import com.stargatex.mobile.lib.pinauth.ui.PinVerifyScreen
 import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.parameter.parametersOf
 
 
 /**
@@ -31,6 +33,8 @@ public interface PINKeyXFacade {
      * provided configuration and the current authentication state.
      *
      * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+     * @param mode The PIN operation mode: UNLOCK (verify existing PIN), SET (create new PIN), or CHANGE (verify old PIN then set new one).
+     *             If null, the mode will be auto-detected based on whether a PIN is already set. Defaults to null.
      * @param shouldCheckAvailability If true, the UI will first check if PIN authentication is available
      *                                and configured on the device. Defaults to true.
      * @param lockConfig Configuration for the lock screen behavior, including PIN prompt settings.
@@ -46,6 +50,7 @@ public interface PINKeyXFacade {
     @Composable
     public fun Compose(
         platformContextProvider: PlatformContextProvider,
+        mode: PinMode? = null,
         shouldCheckAvailability: Boolean = true,
         lockConfig: LockConfig = LockConfig(
             PinPromptConfig.default()
@@ -93,6 +98,8 @@ public object PINKeyX : PINKeyXFacade {
      * provided configuration and the current authentication state.
      *
      * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+     * @param mode The PIN operation mode: UNLOCK (verify), SET (create), or CHANGE (verify then set new).
+     *             If null, auto-detects based on whether PIN exists. Defaults to null.
      * @param shouldCheckAvailability If true, the UI will first check if PIN authentication is available
      *                                and configured on the device.
      * @param lockConfig Configuration for the lock screen behavior, including PIN prompt settings.
@@ -105,6 +112,7 @@ public object PINKeyX : PINKeyXFacade {
     @Composable
     override fun Compose(
         platformContextProvider: PlatformContextProvider,
+        mode: PinMode?,
         shouldCheckAvailability: Boolean,
         lockConfig: LockConfig,
         uiTextConfig: PinUiTextConfig,
@@ -113,6 +121,7 @@ public object PINKeyX : PINKeyXFacade {
         onAuthFailure: (String) -> Unit
     ): Unit = App(
         platformContextProvider,
+        mode,
         shouldCheckAvailability,
         lockConfig,
         uiTextConfig,
@@ -155,8 +164,8 @@ public object PINKeyX : PINKeyXFacade {
  * delegates to the [Base] composable to render the actual PIN verification screen.
  * It also handles the cleanup of the dependency injection framework when the composable is disposed.
  *
- *
  * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+ * @param mode The PIN operation mode (UNLOCK, SET, or CHANGE). If null, auto-detects.
  * @param shouldCheckAvailability If true, the UI will first check if PIN authentication is available
  *                                and configured on the device. Defaults to true.
  * @param lockConfig Configuration for the lock screen behavior, including PIN prompt settings.
@@ -172,6 +181,7 @@ public object PINKeyX : PINKeyXFacade {
 @Preview
 internal fun App(
     platformContextProvider: PlatformContextProvider,
+    mode: PinMode? = null,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig,
     uiTextConfig: PinUiTextConfig,
@@ -182,7 +192,8 @@ internal fun App(
     PinAuthLibDI.start(platformContextProvider)
 
     Base(
-        verifyViewModel = PinAuthLibDI.getKoin().get(),
+        verifyViewModel = PinAuthLibDI.getKoin().get { parametersOf(mode) },
+        mode = mode,
         shouldCheckAvailability = shouldCheckAvailability,
         lockConfig = lockConfig,
         uiTextConfig = uiTextConfig,
@@ -207,6 +218,7 @@ internal fun App(
  * external use.
  *
  * @param verifyViewModel The view model responsible for handling PIN verification logic.
+ * @param mode The PIN operation mode (UNLOCK, SET, or CHANGE).
  * @param shouldCheckAvailability If true, the UI will first check if PIN authentication is available
  *                                and configured on the device. Defaults to true.
  * @param lockConfig Configuration for the lock screen behavior, including PIN prompt settings.
@@ -220,6 +232,7 @@ internal fun App(
 @Composable
 private fun Base(
     verifyViewModel: PINVerifyViewModel,
+    mode: PinMode? = null,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig,
     uiTextConfig: PinUiTextConfig,
