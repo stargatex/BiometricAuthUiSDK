@@ -19,6 +19,7 @@ import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPr
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
 import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextConfig
 import com.stargatex.mobile.lib.pinauth.PINKeyX
+import com.stargatex.mobile.lib.pinauth.domain.model.PinMode
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider as BioPlatformContextProvider
@@ -60,6 +61,7 @@ fun SampleApp(
 
         composable("pin") {
             PINKeyX.Compose(
+                mode = PinMode.UNLOCK,
                 platformContextProvider = pinPlatformContextProvider,
                 shouldCheckAvailability = shouldCheckAvailability,
                 onAuthSuccess = {

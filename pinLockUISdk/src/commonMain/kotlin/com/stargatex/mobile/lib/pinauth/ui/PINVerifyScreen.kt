@@ -90,6 +90,9 @@ internal fun PinVerifyScreen(
         is PinScreenState.Loading -> ""
         is PinScreenState.Save -> stringResource(Res.string.pin_set_new_pin)
         is PinScreenState.Unlock -> stringResource(Res.string.pin_enter_pin)
+        is PinScreenState.VerifyOldForChange -> "Verify Current PIN"
+        is PinScreenState.SaveNew -> "Enter New PIN"
+        is PinScreenState.ConfirmNew -> "Confirm New PIN"
     }
 
     Column(

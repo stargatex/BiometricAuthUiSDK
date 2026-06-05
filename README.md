@@ -278,6 +278,7 @@ various authentication outcomes.
 @Composable
 fun PINKeyX.Compose(
   platformContextProvider: PlatformContextProvider, // Provides platform-specific context
+  mode: PinMode? = null,                            // null = auto-detect, or set UNLOCK / SET / CHANGE
   shouldCheckAvailability: Boolean = true,          // Check for PIN availability/setup
   lockConfig: LockConfig = LockConfig(...),         // Customize PIN
   uiTextConfig: PinUiTextConfig = PinUiTextConfig(...), // Customize UI text
@@ -285,7 +286,35 @@ fun PINKeyX.Compose(
   onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., Biometric)
   onAuthFailure: (String) -> Unit                   // Called on PIN auth failure
 ){}
+```
 
+### PIN Modes (Brief Guide)
+
+- `PinMode.UNLOCK`: user verifies an existing PIN.
+- `PinMode.SET`: user sets and confirms a new PIN.
+- `PinMode.CHANGE`: user verifies current PIN, then sets and confirms a new PIN.
+
+If `mode` is not set (`null`), the SDK auto-detects the flow:
+
+- Stored PIN exists -> `UNLOCK`
+- No stored PIN -> `SET`
+
+```kotlin
+// Auto-detect (good for generic entry screens)
+PINKeyX.Compose(
+  platformContextProvider = platformContextProvider,
+  mode = null,
+  onAuthSuccess = { /* ... */ },
+  onAuthFailure = { /* ... */ }
+)
+
+// Explicit change PIN flow
+PINKeyX.Compose(
+  platformContextProvider = platformContextProvider,
+  mode = PinMode.CHANGE,
+  onAuthSuccess = { /* old PIN verified + new PIN saved */ },
+  onAuthFailure = { /* show error */ }
+)
 ```
 
 **Clearing Stored PIN**: The `PINKeyX.clearStore(...)` function allows you to remove any existing PIN data

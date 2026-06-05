@@ -13,6 +13,7 @@ import com.stargatex.mobile.lib.bimetriclock.resources.biometric_no_hw
 import com.stargatex.mobile.lib.bimetriclock.resources.biometric_screen_title
 import com.stargatex.mobile.lib.bimetriclock.resources.biometric_success
 import com.stargatex.mobile.lib.bimetriclock.resources.biometric_unknown
+import com.stargatex.mobile.lib.bimetriclock.resources.biometric_fallback_button
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -32,6 +33,7 @@ import org.jetbrains.compose.resources.stringResource
  * @property authCancelled Message displayed if biometric authentication is cancelled by the user.
  * @property authExhausted Message displayed when biometric authentication attempts are exhausted.
  * @property errorPrefix Prefix used for displaying detailed error messages.
+ * @property fallbackButtonLabel The label text for the fallback button.
  *
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
@@ -47,7 +49,8 @@ public data class BiometricUiTextConfig(
     val authFailed: String,
     val authCancelled: String,
     val authExhausted: String,
-    val errorPrefix: String
+    val errorPrefix: String,
+    val fallbackButtonLabel: String
 ) {
     public companion object {
         /**
@@ -70,7 +73,8 @@ public data class BiometricUiTextConfig(
             authFailed = stringResource(Res.string.biometric_failed),
             authCancelled = stringResource(Res.string.biometric_cancelled),
             authExhausted = stringResource(Res.string.biometric_exhausted),
-            errorPrefix = stringResource(Res.string.biometric_error_prefix)
+            errorPrefix = stringResource(Res.string.biometric_error_prefix),
+            fallbackButtonLabel = stringResource(Res.string.biometric_fallback_button)
         )
     }
 }
