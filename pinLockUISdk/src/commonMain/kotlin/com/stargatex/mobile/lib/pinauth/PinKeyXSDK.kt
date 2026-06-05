@@ -7,6 +7,7 @@ import com.stargatex.mobile.lib.pinauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.domain.model.LockConfig
 import com.stargatex.mobile.lib.pinauth.domain.model.PinPromptConfig
 import com.stargatex.mobile.lib.pinauth.domain.usecase.ClearPINUseCase
+import com.stargatex.mobile.lib.pinauth.domain.usecase.FetchSavedPINUseCase
 import com.stargatex.mobile.lib.pinauth.ui.PINVerifyViewModel
 import com.stargatex.mobile.lib.pinauth.ui.PinVerifyScreen
 import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
@@ -64,6 +65,17 @@ public interface PINKeyXFacade {
      * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
      */
     public fun clearStore(platformContextProvider: PlatformContextProvider)
+
+    /**
+     * Checks whether a PIN has already been set and stored on the device.
+     *
+     * Use this before showing a "Change PIN" option to determine if the user has an existing PIN.
+     * If no PIN is set, you should direct the user to set a PIN instead of changing one.
+     *
+     * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+     * @return `true` if a PIN is currently stored, `false` otherwise.
+     */
+    public suspend fun isPinSet(platformContextProvider: PlatformContextProvider): Boolean
 }
 
 /**
@@ -120,6 +132,18 @@ public object PINKeyX : PINKeyXFacade {
      */
     override fun clearStore(platformContextProvider: PlatformContextProvider) {
         clearPinStore(platformContextProvider)
+    }
+
+    /**
+     * Checks whether a PIN has already been set and stored on the device.
+     *
+     * It internally calls [checkIsPinSet] to perform the actual lookup.
+     *
+     * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+     * @return `true` if a PIN is currently stored, `false` otherwise.
+     */
+    override suspend fun isPinSet(platformContextProvider: PlatformContextProvider): Boolean {
+        return checkIsPinSet(platformContextProvider)
     }
 }
 
@@ -232,3 +256,19 @@ internal fun clearPinStore(platformContextProvider: PlatformContextProvider) {
     val clearPINUseCase: ClearPINUseCase = PinAuthLibDI.getKoin().get()
     clearPINUseCase.invoke()
 }
+
+/**
+ * Internal suspend function to check whether a PIN has been stored.
+ *
+ * Initializes the dependency injection framework if needed, retrieves the
+ * [FetchSavedPINUseCase] instance, and returns whether a PIN value exists.
+ *
+ * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
+ * @return `true` if a PIN is stored, `false` otherwise.
+ */
+internal suspend fun checkIsPinSet(platformContextProvider: PlatformContextProvider): Boolean {
+    PinAuthLibDI.start(platformContextProvider)
+    val fetchSavedPINUseCase: FetchSavedPINUseCase = PinAuthLibDI.getKoin().get()
+    return fetchSavedPINUseCase.invoke() != null
+}
+
