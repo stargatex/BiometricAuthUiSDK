@@ -43,7 +43,7 @@ fun SampleApp(
 ) {
     val navController = rememberNavController()
 
-    NavHost(navController, startDestination = "pin") {
+    NavHost(navController, startDestination = "biometric") {
         composable("biometric") {
             BioKeyX.Compose(
                 platformContextProvider = bioPlatformContextProvider,

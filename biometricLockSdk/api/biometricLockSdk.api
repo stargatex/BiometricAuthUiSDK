@@ -64,10 +64,11 @@ public final class com/stargatex/mobile/lib/biometricauth/domain/biometric/model
 public final class com/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig {
 	public static final field $stable I
 	public static final field Companion Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig$Companion;
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/lang/String;
 	public final fun component11 ()Ljava/lang/String;
+	public final fun component12 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
@@ -76,8 +77,8 @@ public final class com/stargatex/mobile/lib/biometricauth/ui/model/config/Biomet
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/String;
 	public final fun component9 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
-	public static synthetic fun copy$default (Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
+	public static synthetic fun copy$default (Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAuthCancelled ()Ljava/lang/String;
 	public final fun getAuthExhausted ()Ljava/lang/String;
@@ -85,6 +86,7 @@ public final class com/stargatex/mobile/lib/biometricauth/ui/model/config/Biomet
 	public final fun getAuthSuccess ()Ljava/lang/String;
 	public final fun getAvailable ()Ljava/lang/String;
 	public final fun getErrorPrefix ()Ljava/lang/String;
+	public final fun getFallbackButtonLabel ()Ljava/lang/String;
 	public final fun getHardwareUnavailable ()Ljava/lang/String;
 	public final fun getNoEnrollment ()Ljava/lang/String;
 	public final fun getNoHardware ()Ljava/lang/String;
