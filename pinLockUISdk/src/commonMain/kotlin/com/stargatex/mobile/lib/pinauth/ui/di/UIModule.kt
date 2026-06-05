@@ -1,7 +1,7 @@
 package com.stargatex.mobile.lib.pinauth.ui.di
 
+import com.stargatex.mobile.lib.pinauth.domain.model.PinMode
 import com.stargatex.mobile.lib.pinauth.ui.PINVerifyViewModel
-import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
@@ -10,5 +10,11 @@ import org.koin.dsl.module
  */
 
 internal fun uiModule() = module {
-    viewModelOf(::PINVerifyViewModel)
+    // Parametrized factory that accepts optional PinMode
+    factory { (mode: PinMode?) ->
+        PINVerifyViewModel(
+            pinUseCase = get(),
+            mode = mode
+        )
+    }
 }
