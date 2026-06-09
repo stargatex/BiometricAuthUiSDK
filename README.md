@@ -56,6 +56,9 @@ The main entry point is the `BioKeyX.Compose(...)` function. You embed this in y
 to trigger biometric verification. It handles the display of the biometric prompt and provides
 callbacks for various authentication outcomes.
 
+If you want to keep full control of your own screen UI and only trigger biometric authentication logic,
+use `BioKeyX.Authenticate(...)`.
+
 ```kotlin
 @Composable
 fun BioKeyX.Compose(
@@ -68,6 +71,54 @@ fun BioKeyX.Compose(
   onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., PIN)
   onAuthFailure: (String) -> Unit                   // Called on authentication failure
 )
+```
+
+### Headless Authentication (Developer-owned screen UI)
+
+`BioKeyX.Authenticate(...)` performs availability check + biometric prompt flow without rendering
+the SDK biometric screen.
+
+```kotlin
+@Composable
+fun CustomSecurityScreen(platformContextProvider: PlatformContextProvider) {
+  var shouldAuthenticate by remember { mutableStateOf(false) }
+  var authStatus by remember { mutableStateOf("Tap to authenticate") }
+
+  Column {
+    Text(authStatus)
+    Button(onClick = {
+      authStatus = "Authenticating..."
+      shouldAuthenticate = true
+    }) {
+      Text("Authenticate")
+    }
+  }
+
+  if (shouldAuthenticate) {
+    BioKeyX.Authenticate(
+      platformContextProvider = platformContextProvider,
+      shouldCheckAvailability = true,
+      lockConfig = LockConfig(BiometricPromptConfig.default()),
+      uiTextConfig = BiometricUiTextConfig.default(),
+      onAuthSuccess = {
+        authStatus = "Authentication Successful"
+        shouldAuthenticate = false
+      },
+      onNoEnrollment = {
+        authStatus = "No biometrics enrolled"
+        shouldAuthenticate = false
+      },
+      onFallback = {
+        authStatus = "Fallback requested"
+        shouldAuthenticate = false
+      },
+      onAuthFailure = { error ->
+        authStatus = "Authentication Failed: $error"
+        shouldAuthenticate = false
+      }
+    )
+  }
+}
 ```
 
 ### Android App (Jetpack Compose)
@@ -271,7 +322,7 @@ dependencies {
 
 **Displaying PIN UI**: The `PINKeyX.Compose(...)` function is the main entry point for rendering the PIN
 screen. Embed this in your UI where you want to trigger PIN verification. It provides callbacks for
-various authentication outcomes.
+various authentication outcomes and also supports injecting extra action UI below the keypad.
 
 ```kotlin
 
@@ -284,7 +335,8 @@ fun PINKeyX.Compose(
   uiTextConfig: PinUiTextConfig = PinUiTextConfig(...), // Customize UI text
   onAuthSuccess: () -> Unit,                        // Called on successful PIN auth
   onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., Biometric)
-  onAuthFailure: (String) -> Unit                   // Called on PIN auth failure
+  onAuthFailure: (String) -> Unit,                  // Called on PIN auth failure
+  additionalOptions: @Composable ColumnScope.() -> Unit = {} // Optional custom actions under keypad
 ){}
 ```
 
@@ -314,6 +366,22 @@ PINKeyX.Compose(
   mode = PinMode.CHANGE,
   onAuthSuccess = { /* old PIN verified + new PIN saved */ },
   onAuthFailure = { /* show error */ }
+)
+
+// Add custom actions below keypad (e.g. biometric + logout)
+PINKeyX.Compose(
+  platformContextProvider = platformContextProvider,
+  onAuthSuccess = { /* ... */ },
+  onAuthFailure = { /* ... */ },
+  additionalOptions = {
+    Spacer(modifier = Modifier.height(8.dp))
+    TextButton(onClick = { /* trigger biometric */ }) {
+      Text("Use biometrics")
+    }
+    TextButton(onClick = { /* logout */ }) {
+      Text("Logout")
+    }
+  }
 )
 ```
 

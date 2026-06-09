@@ -1,7 +1,10 @@
 package com.stargatex.mobile.lib.biometricauth.di
 
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.internal.synchronized
 import org.koin.core.Koin
 import org.koin.core.KoinApplication
+import kotlin.concurrent.Volatile
 
 /**
  * @author Lahiru Jayawickrama (lahirujay)
