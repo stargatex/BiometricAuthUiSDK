@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.3.0] - 2026-06-09
+### Changed
+- Refactored biometric and PIN authentication initialization for improved lifecycle management.
+- Refactored biometric and PIN authentication API for improved clarity and maintainability.
+- Optimized biometric authentication initialization and improved resource management.
+
 ## [v1.2.1] - 2026-06-09
 ### Added
 - Added `BioKeyX.Authenticate(...)` for headless biometric authentication flows without rendering the SDK biometric screen.
