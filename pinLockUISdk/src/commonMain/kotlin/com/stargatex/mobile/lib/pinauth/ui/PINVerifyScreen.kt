@@ -2,6 +2,7 @@ package com.stargatex.mobile.lib.pinauth.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,6 +45,7 @@ import org.jetbrains.compose.resources.stringResource
  * @param onUnlockSuccess Callback invoked when PIN verification is successful. Defaults to an empty lambda.
  * @param onFallback Callback invoked for fallback scenarios (Not currently used in this composable directly but passed to ViewModel logic). Defaults to an empty lambda.
  * @param onAuthFailure Callback invoked when authentication fails, providing an error message. Defaults to an empty lambda.
+ * @param additionalOptions Composable slot for injecting custom UI actions (for example, biometric trigger or logout button).
  *
  * @author Lahiru Jayawickrama (stargatex)
  * @version 1.0.0
@@ -57,7 +59,8 @@ internal fun PinVerifyScreen(
     uiTextConfig: PinUiTextConfig = PinUiTextConfig.default(),
     onUnlockSuccess: () -> Unit = {},
     onFallback: () -> Unit = {},
-    onAuthFailure: (String) -> Unit = {}
+    onAuthFailure: (String) -> Unit = {},
+    additionalOptions: @Composable ColumnScope.() -> Unit = {}
 ) {
     val screenUiState by verifyViewModel.pinScreenUiState.collectAsState()
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -120,6 +123,8 @@ internal fun PinVerifyScreen(
             Spacer(Modifier.height(16.dp))
             Text(text = it, color = MaterialTheme.colorScheme.error)
         }
+        Spacer(Modifier.height(16.dp))
+        additionalOptions()
         Spacer(Modifier.height(16.dp))
         //Text(uiTextConfig.screenNote)
     }

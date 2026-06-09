@@ -271,7 +271,7 @@ dependencies {
 
 **Displaying PIN UI**: The `PINKeyX.Compose(...)` function is the main entry point for rendering the PIN
 screen. Embed this in your UI where you want to trigger PIN verification. It provides callbacks for
-various authentication outcomes.
+various authentication outcomes and also supports injecting extra action UI below the keypad.
 
 ```kotlin
 
@@ -284,7 +284,8 @@ fun PINKeyX.Compose(
   uiTextConfig: PinUiTextConfig = PinUiTextConfig(...), // Customize UI text
   onAuthSuccess: () -> Unit,                        // Called on successful PIN auth
   onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., Biometric)
-  onAuthFailure: (String) -> Unit                   // Called on PIN auth failure
+  onAuthFailure: (String) -> Unit,                  // Called on PIN auth failure
+  additionalOptions: @Composable ColumnScope.() -> Unit = {} // Optional custom actions under keypad
 ){}
 ```
 
@@ -314,6 +315,22 @@ PINKeyX.Compose(
   mode = PinMode.CHANGE,
   onAuthSuccess = { /* old PIN verified + new PIN saved */ },
   onAuthFailure = { /* show error */ }
+)
+
+// Add custom actions below keypad (e.g. biometric + logout)
+PINKeyX.Compose(
+  platformContextProvider = platformContextProvider,
+  onAuthSuccess = { /* ... */ },
+  onAuthFailure = { /* ... */ },
+  additionalOptions = {
+    Spacer(modifier = Modifier.height(8.dp))
+    TextButton(onClick = { /* trigger biometric */ }) {
+      Text("Use biometrics")
+    }
+    TextButton(onClick = { /* logout */ }) {
+      Text("Logout")
+    }
+  }
 )
 ```
 

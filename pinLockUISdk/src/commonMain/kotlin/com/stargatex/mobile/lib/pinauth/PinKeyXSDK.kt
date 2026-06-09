@@ -1,5 +1,6 @@
 package com.stargatex.mobile.lib.pinauth
 
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import com.stargatex.mobile.lib.pinauth.di.PinAuthLibDI
@@ -12,7 +13,6 @@ import com.stargatex.mobile.lib.pinauth.domain.usecase.FetchSavedPINUseCase
 import com.stargatex.mobile.lib.pinauth.ui.PINVerifyViewModel
 import com.stargatex.mobile.lib.pinauth.ui.PinVerifyScreen
 import com.stargatex.mobile.lib.pinauth.ui.model.config.PinUiTextConfig
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 import org.koin.core.parameter.parametersOf
 
@@ -46,6 +46,7 @@ public interface PINKeyXFacade {
      *                   Defaults to an empty lambda.
      * @param onAuthFailure Callback invoked when PIN authentication fails. It receives a `String` message
      *                      describing the failure. Defaults to an empty lambda.
+     * @param additionalOptions Composable slot for rendering custom actions (e.g., biometric trigger, logout) beneath the keypad.
      */
     @Composable
     public fun Compose(
@@ -58,7 +59,8 @@ public interface PINKeyXFacade {
         uiTextConfig: PinUiTextConfig = PinUiTextConfig.default(),
         onAuthSuccess: () -> Unit = {},
         onFallback: () -> Unit = {},
-        onAuthFailure: (String) -> Unit = {}
+        onAuthFailure: (String) -> Unit = {},
+        additionalOptions: @Composable ColumnScope.() -> Unit = {}
     )
 
     /**
@@ -108,6 +110,7 @@ public object PINKeyX : PINKeyXFacade {
      * @param onFallback Callback invoked when a fallback authentication method is triggered (e.g., biometric prompt).
      * @param onAuthFailure Callback invoked when PIN authentication fails. It receives a `String` message
      *                      describing the failure.
+     * @param additionalOptions Composable slot for rendering custom actions below the keypad.
      */
     @Composable
     override fun Compose(
@@ -118,7 +121,8 @@ public object PINKeyX : PINKeyXFacade {
         uiTextConfig: PinUiTextConfig,
         onAuthSuccess: () -> Unit,
         onFallback: () -> Unit,
-        onAuthFailure: (String) -> Unit
+        onAuthFailure: (String) -> Unit,
+        additionalOptions: @Composable ColumnScope.() -> Unit
     ): Unit = App(
         platformContextProvider,
         mode,
@@ -127,7 +131,8 @@ public object PINKeyX : PINKeyXFacade {
         uiTextConfig,
         onAuthSuccess,
         onFallback,
-        onAuthFailure
+        onAuthFailure,
+        additionalOptions
     )
 
     /**
@@ -175,10 +180,10 @@ public object PINKeyX : PINKeyXFacade {
  *                   Defaults to an empty lambda.
  * @param onAuthFailure Callback invoked when PIN authentication fails. It receives a `String` message
  *                      describing the failure. Defaults to an empty lambda.
+ * @param additionalOptions Composable slot for rendering custom actions below the keypad.
  */
 @OptIn(KoinExperimentalAPI::class)
 @Composable
-@Preview
 internal fun App(
     platformContextProvider: PlatformContextProvider,
     mode: PinMode? = null,
@@ -187,7 +192,8 @@ internal fun App(
     uiTextConfig: PinUiTextConfig,
     onAuthSuccess: () -> Unit = {},
     onFallback: () -> Unit = {},
-    onAuthFailure: (String) -> Unit = {}
+    onAuthFailure: (String) -> Unit = {},
+    additionalOptions: @Composable ColumnScope.() -> Unit = {}
 ) {
     PinAuthLibDI.start(platformContextProvider)
 
@@ -199,7 +205,8 @@ internal fun App(
         uiTextConfig = uiTextConfig,
         onAuthSuccess = onAuthSuccess,
         onFallback = onFallback,
-        onAuthFailure = onAuthFailure
+        onAuthFailure = onAuthFailure,
+        additionalOptions = additionalOptions
     )
 
     DisposableEffect(Unit) {
@@ -228,6 +235,7 @@ internal fun App(
  *                   Defaults to an empty lambda.
  * @param onAuthFailure Callback invoked when PIN authentication fails. It receives a `String` message
  *                      describing the failure. Defaults to an empty lambda.
+ * @param additionalOptions Composable slot for rendering custom actions below the keypad.
  */
 @Composable
 private fun Base(
@@ -238,7 +246,8 @@ private fun Base(
     uiTextConfig: PinUiTextConfig,
     onAuthSuccess: () -> Unit = {},
     onFallback: () -> Unit = {},
-    onAuthFailure: (String) -> Unit = {}
+    onAuthFailure: (String) -> Unit = {},
+    additionalOptions: @Composable ColumnScope.() -> Unit = {}
 ) {
     PinVerifyScreen(
         verifyViewModel = verifyViewModel,
@@ -247,7 +256,8 @@ private fun Base(
         uiTextConfig = uiTextConfig,
         onUnlockSuccess = onAuthSuccess,
         onFallback = onFallback,
-        onAuthFailure = onAuthFailure
+        onAuthFailure = onAuthFailure,
+        additionalOptions = additionalOptions
     )
 }
 
