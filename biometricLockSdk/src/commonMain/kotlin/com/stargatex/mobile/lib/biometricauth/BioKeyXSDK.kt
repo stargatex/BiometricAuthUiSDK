@@ -2,10 +2,9 @@ package com.stargatex.mobile.lib.biometricauth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.stargatex.mobile.lib.biometricauth.Base
+import androidx.compose.runtime.remember
 import com.stargatex.mobile.lib.biometricauth.di.BiometricAuthLibDI
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPromptConfig
@@ -179,10 +178,22 @@ internal fun App(
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
-    BiometricAuthLibDI.start(platformContextProvider)
+    // remember ensures start() is called exactly once per platformContextProvider instance,
+    // not on every recomposition. getKoin() is safe here because start() precedes it.
+    val verifyViewModel: BiometricVerifyViewModel = remember(platformContextProvider) {
+        BiometricAuthLibDI.start(platformContextProvider)
+        BiometricAuthLibDI.getKoin().get()
+    }
 
-    Base(
-        verifyViewModel = BiometricAuthLibDI.getKoin().get(),
+    // Keyed on platformContextProvider so stop/start are re-run if context changes.
+    DisposableEffect(platformContextProvider) {
+        onDispose {
+            BiometricAuthLibDI.stop()
+        }
+    }
+
+    BiometricVerifyScreen(
+        verifyViewModel = verifyViewModel,
         shouldCheckAvailability = shouldCheckAvailability,
         lockConfig = lockConfig,
         uiTextConfig = uiTextConfig,
@@ -191,12 +202,6 @@ internal fun App(
         onFallback = onFallback,
         onAuthFailure = onAuthFailure
     )
-
-    DisposableEffect(Unit) {
-        onDispose {
-            BiometricAuthLibDI.stop()
-        }
-    }
 }
 
 @OptIn(KoinExperimentalAPI::class)
@@ -211,9 +216,13 @@ internal fun appHeadless(
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
-    BiometricAuthLibDI.start(platformContextProvider)
+    // remember ensures start() is called exactly once per platformContextProvider instance,
+    // not on every recomposition. getKoin() is safe here because start() precedes it.
+    val verifyViewModel: BiometricVerifyViewModel = remember(platformContextProvider) {
+        BiometricAuthLibDI.start(platformContextProvider)
+        BiometricAuthLibDI.getKoin().get()
+    }
 
-    val verifyViewModel: BiometricVerifyViewModel = BiometricAuthLibDI.getKoin().get()
     val availability by verifyViewModel.availability.collectAsState()
     val authenticationResult by verifyViewModel.authResult.collectAsState()
 
@@ -230,47 +239,10 @@ internal fun appHeadless(
         onAuthFailure = onAuthFailure
     )
 
-    DisposableEffect(Unit) {
+    // Keyed on platformContextProvider so stop/start are re-run if context changes.
+    DisposableEffect(platformContextProvider) {
         onDispose {
             BiometricAuthLibDI.stop()
         }
     }
-}
-
-
-
-/**
- * Composable function that serves as the base for the biometric authentication UI.
- * It wraps the [BiometricVerifyScreen] and provides it with the necessary dependencies and configurations.
- *
- * @param verifyViewModel The view model responsible for handling biometric verification logic.
- * @param shouldCheckAvailability A boolean flag indicating whether to check for biometric availability before attempting authentication. Defaults to `true`.
- * @param lockConfig The configuration for the biometric prompt, such as title, subtitle, and description.
- * @param uiTextConfig The configuration for UI text elements, such as button labels and messages.
- * @param onAuthSuccess A callback function to be invoked when biometric authentication is successful.
- * @param onNoEnrollment A callback function to be invoked when no biometric credentials are enrolled on the device.
- * @param onFallback A callback function to be invoked when the user opts for a fallback authentication method.
- * @param onAuthFailure A callback function to be invoked when biometric authentication fails, providing an error message.
- */
-@Composable
-private fun Base(
-    verifyViewModel: BiometricVerifyViewModel,
-    shouldCheckAvailability: Boolean = true,
-    lockConfig: LockConfig,
-    uiTextConfig: BiometricUiTextConfig,
-    onAuthSuccess: () -> Unit = {},
-    onNoEnrollment: () -> Unit = {},
-    onFallback: () -> Unit = {},
-    onAuthFailure: (String) -> Unit = {}
-) {
-    BiometricVerifyScreen(
-        verifyViewModel = verifyViewModel,
-        shouldCheckAvailability = shouldCheckAvailability,
-        lockConfig = lockConfig,
-        uiTextConfig = uiTextConfig,
-        onAuthSuccess = onAuthSuccess,
-        onNoEnrollment = onNoEnrollment,
-        onFallback = onFallback,
-        onAuthFailure = onAuthFailure
-    )
 }
