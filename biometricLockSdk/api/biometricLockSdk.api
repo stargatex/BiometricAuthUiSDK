@@ -10,11 +10,8 @@ public abstract interface class com/stargatex/mobile/lib/biometricauth/BioKeyXFa
 	public abstract fun Compose (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 }
 
-public final class com/stargatex/mobile/lib/biometricauth/BioKeyXFacade$AuthenticateDefaultImpls {
-	public static final fun Authenticate$default (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lcom/stargatex/mobile/lib/biometricauth/BioKeyXFacade;Landroidx/compose/runtime/Composer;II)V
-}
-
 public final class com/stargatex/mobile/lib/biometricauth/BioKeyXFacade$ComposeDefaultImpls {
+	public static final fun Authenticate$default (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lcom/stargatex/mobile/lib/biometricauth/BioKeyXFacade;Landroidx/compose/runtime/Composer;II)V
 	public static final fun Compose$default (Lcom/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider;ZLcom/stargatex/mobile/lib/biometricauth/domain/biometric/model/LockConfig;Lcom/stargatex/mobile/lib/biometricauth/ui/model/config/BiometricUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lcom/stargatex/mobile/lib/biometricauth/BioKeyXFacade;Landroidx/compose/runtime/Composer;II)V
 }
 

@@ -3,7 +3,6 @@ public final class com/stargatex/mobile/lib/pinauth/ComposableSingletons$PinKeyX
 	public fun <init> ()V
 	public final fun getLambda$-1824360817$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda$-1827843388$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda$1791881526$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class com/stargatex/mobile/lib/pinauth/PINKeyX : com/stargatex/mobile/lib/pinauth/PINKeyXFacade {
