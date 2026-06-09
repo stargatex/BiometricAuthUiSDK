@@ -3,6 +3,7 @@ package com.stargatex.mobile.lib.pinauth
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import com.stargatex.mobile.lib.pinauth.di.PinAuthLibDI
 import com.stargatex.mobile.lib.pinauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.domain.model.LockConfig
@@ -140,34 +141,38 @@ public object PINKeyX : PINKeyXFacade {
      *
      * This function should be called when the user wants to remove their PIN configuration
      * or when the application needs to reset the PIN authentication state.
-     * It internally calls [clearPinStore] to perform the actual clearing operation.
      *
      * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
      */
     override fun clearStore(platformContextProvider: PlatformContextProvider) {
-        clearPinStore(platformContextProvider)
+        PinAuthLibDI.start(platformContextProvider)
+        val clearPINUseCase: ClearPINUseCase = PinAuthLibDI.getKoin().get()
+        clearPINUseCase.invoke()
+        PinAuthLibDI.stop()
     }
 
     /**
      * Checks whether a PIN has already been set and stored on the device.
      *
-     * It internally calls [checkIsPinSet] to perform the actual lookup.
-     *
      * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
      * @return `true` if a PIN is currently stored, `false` otherwise.
      */
     override suspend fun isPinSet(platformContextProvider: PlatformContextProvider): Boolean {
-        return checkIsPinSet(platformContextProvider)
+        PinAuthLibDI.start(platformContextProvider)
+        val fetchSavedPINUseCase: FetchSavedPINUseCase = PinAuthLibDI.getKoin().get()
+        val result = fetchSavedPINUseCase.invoke() != null
+        PinAuthLibDI.stop()
+        return result
     }
 }
 
 
 /**
- * Internal composable function that sets up the PIN authentication library and displays the base UI.
+ * Internal composable function that sets up the PIN authentication library and displays the PIN UI.
  *
- * This function initializes the dependency injection framework ([PinAuthLibDI]) and then
- * delegates to the [Base] composable to render the actual PIN verification screen.
- * It also handles the cleanup of the dependency injection framework when the composable is disposed.
+ * This function initializes the dependency injection framework ([PinAuthLibDI]) via [remember]
+ * to guard against repeated initialization on recomposition, then renders [PinVerifyScreen] directly.
+ * DI cleanup is performed via [DisposableEffect] when the composable leaves the composition.
  *
  * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
  * @param mode The PIN operation mode (UNLOCK, SET, or CHANGE). If null, auto-detects.
@@ -195,15 +200,22 @@ internal fun App(
     onAuthFailure: (String) -> Unit = {},
     additionalOptions: @Composable ColumnScope.() -> Unit = {}
 ) {
-    PinAuthLibDI.start(platformContextProvider)
+    // Use remember to guard against repeated initialization on recomposition.
+    // platformContextProvider is the key so if it changes the DI is re-initialized.
+    remember(platformContextProvider) {
+        PinAuthLibDI.start(platformContextProvider)
+    }
 
-    Base(
-        verifyViewModel = PinAuthLibDI.getKoin().get { parametersOf(mode) },
-        mode = mode,
+    val verifyViewModel: PINVerifyViewModel = remember(mode) {
+        PinAuthLibDI.getKoin().get { parametersOf(mode) }
+    }
+
+    PinVerifyScreen(
+        verifyViewModel = verifyViewModel,
         shouldCheckAvailability = shouldCheckAvailability,
         lockConfig = lockConfig,
         uiTextConfig = uiTextConfig,
-        onAuthSuccess = onAuthSuccess,
+        onUnlockSuccess = onAuthSuccess,
         onFallback = onFallback,
         onAuthFailure = onAuthFailure,
         additionalOptions = additionalOptions
@@ -217,81 +229,4 @@ internal fun App(
 }
 
 
-/**
- * Internal composable function that renders the core PIN verification UI.
- *
- * This function is responsible for displaying the `PinVerifyScreen` and passing down
- * the necessary view model, configurations, and callbacks. It's not intended for direct
- * external use.
- *
- * @param verifyViewModel The view model responsible for handling PIN verification logic.
- * @param mode The PIN operation mode (UNLOCK, SET, or CHANGE).
- * @param shouldCheckAvailability If true, the UI will first check if PIN authentication is available
- *                                and configured on the device. Defaults to true.
- * @param lockConfig Configuration for the lock screen behavior, including PIN prompt settings.
- * @param uiTextConfig Configuration for the text displayed in the PIN UI.
- * @param onAuthSuccess Callback invoked when PIN authentication is successful. Defaults to an empty lambda.
- * @param onFallback Callback invoked when a fallback authentication method is triggered (e.g., biometric prompt).
- *                   Defaults to an empty lambda.
- * @param onAuthFailure Callback invoked when PIN authentication fails. It receives a `String` message
- *                      describing the failure. Defaults to an empty lambda.
- * @param additionalOptions Composable slot for rendering custom actions below the keypad.
- */
-@Composable
-private fun Base(
-    verifyViewModel: PINVerifyViewModel,
-    mode: PinMode? = null,
-    shouldCheckAvailability: Boolean = true,
-    lockConfig: LockConfig,
-    uiTextConfig: PinUiTextConfig,
-    onAuthSuccess: () -> Unit = {},
-    onFallback: () -> Unit = {},
-    onAuthFailure: (String) -> Unit = {},
-    additionalOptions: @Composable ColumnScope.() -> Unit = {}
-) {
-    PinVerifyScreen(
-        verifyViewModel = verifyViewModel,
-        shouldCheckAvailability = shouldCheckAvailability,
-        lockConfig = lockConfig,
-        uiTextConfig = uiTextConfig,
-        onUnlockSuccess = onAuthSuccess,
-        onFallback = onFallback,
-        onAuthFailure = onAuthFailure,
-        additionalOptions = additionalOptions
-    )
-}
-
-/**
- * Internal function to clear the stored PIN data.
- *
- * This function initializes the dependency injection framework if it hasn't been already,
- * retrieves the [ClearPINUseCase] instance, and then invokes it to perform the
- * PIN clearing operation.
- *
- * This function is intended for internal use within the library and is called by the
- * public `clearStore` method in the [PINKeyX] object.
- *
- * @param platformContextProvider Provides platform-specific context, such as the Android `Context`,
- *                                 required for initializing dependencies.
- */
-internal fun clearPinStore(platformContextProvider: PlatformContextProvider) {
-    PinAuthLibDI.start(platformContextProvider)
-    val clearPINUseCase: ClearPINUseCase = PinAuthLibDI.getKoin().get()
-    clearPINUseCase.invoke()
-}
-
-/**
- * Internal suspend function to check whether a PIN has been stored.
- *
- * Initializes the dependency injection framework if needed, retrieves the
- * [FetchSavedPINUseCase] instance, and returns whether a PIN value exists.
- *
- * @param platformContextProvider Provides platform-specific context, such as the Android `Context`.
- * @return `true` if a PIN is stored, `false` otherwise.
- */
-internal suspend fun checkIsPinSet(platformContextProvider: PlatformContextProvider): Boolean {
-    PinAuthLibDI.start(platformContextProvider)
-    val fetchSavedPINUseCase: FetchSavedPINUseCase = PinAuthLibDI.getKoin().get()
-    return fetchSavedPINUseCase.invoke() != null
-}
 

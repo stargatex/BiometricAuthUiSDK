@@ -11,16 +11,15 @@ import kotlin.concurrent.Volatile
  * @author Lahiru Jayawickrama (lahirujay)
  * @version 1.0
  */
+@OptIn(InternalCoroutinesApi::class)
 internal object BiometricAuthLibDI {
 
     @Volatile
     private var koinApp: KoinApplication? = null
 
     // kotlinx.coroutines.internal.synchronized requires a SynchronizedObject lock, not 'this'
-    @OptIn(InternalCoroutinesApi::class)
     private val lock = SynchronizedObject()
 
-    @OptIn(InternalCoroutinesApi::class)
     fun start(platformContextProvider: PlatformContextProvider) {
         if (koinApp == null) {
             synchronized(lock) {
@@ -33,8 +32,10 @@ internal object BiometricAuthLibDI {
     }
 
     fun stop() {
-        koinApp?.close()
-        koinApp = null
+        synchronized(lock) {
+            koinApp?.close()
+            koinApp = null
+        }
     }
 
     fun getKoin(): Koin = koinApp?.koin
