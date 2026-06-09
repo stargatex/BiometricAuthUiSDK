@@ -75,33 +75,18 @@ internal fun BiometricVerifyScreen(
     val availability by verifyViewModel.availability.collectAsState()
     val authenticationResult by verifyViewModel.authResult.collectAsState()
 
-    LaunchedEffect(shouldCheckAvailability) {
-        if (shouldCheckAvailability) {
-            verifyViewModel.checkBiometricAvailability()
-        }
-    }
-
-    LaunchedEffect(availability) {
-        when (availability) {
-            BiometricAvailabilityResult.Available -> verifyViewModel.startAuthentication(lockConfig)
-            BiometricAvailabilityResult.NoEnrollment -> onNoEnrollment()
-            BiometricAvailabilityResult.NoHardware -> onFallback()
-            BiometricAvailabilityResult.HardwareUnavailable,
-            BiometricAvailabilityResult.Unknown,
-            null -> Unit
-        }
-    }
-
-    LaunchedEffect(authenticationResult) {
-        when (val result = authenticationResult) {
-            is BiometricAuthResult.Success -> onAuthSuccess()
-            is BiometricAuthResult.Failed -> onAuthFailure(uiTextConfig.authFailed)
-            is BiometricAuthResult.Error -> onAuthFailure(result.message)
-            BiometricAuthResult.NegativeButtonClick,
-            BiometricAuthResult.AttemptExhausted,
-            null -> Unit
-        }
-    }
+    biometricVerifyEffects(
+        verifyViewModel = verifyViewModel,
+        shouldCheckAvailability = shouldCheckAvailability,
+        lockConfig = lockConfig,
+        availability = availability,
+        authenticationResult = authenticationResult,
+        authFailedMessage = uiTextConfig.authFailed,
+        onAuthSuccess = onAuthSuccess,
+        onNoEnrollment = onNoEnrollment,
+        onFallback = onFallback,
+        onAuthFailure = onAuthFailure
+    )
 
     val statusText = when (val result = authenticationResult) {
         is BiometricAuthResult.Success -> uiTextConfig.authSuccess
@@ -182,6 +167,48 @@ internal fun BiometricVerifyScreen(
                 text = uiTextConfig.fallbackButtonLabel,
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium)
             )
+        }
+    }
+}
+
+@Composable
+internal fun biometricVerifyEffects(
+    verifyViewModel: BiometricVerifyViewModel,
+    shouldCheckAvailability: Boolean,
+    lockConfig: LockConfig,
+    availability: BiometricAvailabilityResult?,
+    authenticationResult: BiometricAuthResult?,
+    authFailedMessage: String,
+    onAuthSuccess: () -> Unit,
+    onNoEnrollment: () -> Unit,
+    onFallback: () -> Unit,
+    onAuthFailure: (String) -> Unit
+) {
+    LaunchedEffect(shouldCheckAvailability) {
+        if (shouldCheckAvailability) {
+            verifyViewModel.checkBiometricAvailability()
+        }
+    }
+
+    LaunchedEffect(availability) {
+        when (availability) {
+            BiometricAvailabilityResult.Available -> verifyViewModel.startAuthentication(lockConfig)
+            BiometricAvailabilityResult.NoEnrollment -> onNoEnrollment()
+            BiometricAvailabilityResult.NoHardware -> onFallback()
+            BiometricAvailabilityResult.HardwareUnavailable,
+            BiometricAvailabilityResult.Unknown,
+            null -> Unit
+        }
+    }
+
+    LaunchedEffect(authenticationResult) {
+        when (val result = authenticationResult) {
+            is BiometricAuthResult.Success -> onAuthSuccess()
+            is BiometricAuthResult.Failed -> onAuthFailure(authFailedMessage)
+            is BiometricAuthResult.Error -> onAuthFailure(result.message)
+            BiometricAuthResult.NegativeButtonClick,
+            BiometricAuthResult.AttemptExhausted,
+            null -> Unit
         }
     }
 }

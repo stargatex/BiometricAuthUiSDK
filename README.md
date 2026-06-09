@@ -56,6 +56,9 @@ The main entry point is the `BioKeyX.Compose(...)` function. You embed this in y
 to trigger biometric verification. It handles the display of the biometric prompt and provides
 callbacks for various authentication outcomes.
 
+If you want to keep full control of your own screen UI and only trigger biometric authentication logic,
+use `BioKeyX.Authenticate(...)`.
+
 ```kotlin
 @Composable
 fun BioKeyX.Compose(
@@ -68,6 +71,54 @@ fun BioKeyX.Compose(
   onFallback: () -> Unit,                           // Called if user chooses fallback (e.g., PIN)
   onAuthFailure: (String) -> Unit                   // Called on authentication failure
 )
+```
+
+### Headless Authentication (Developer-owned screen UI)
+
+`BioKeyX.Authenticate(...)` performs availability check + biometric prompt flow without rendering
+the SDK biometric screen.
+
+```kotlin
+@Composable
+fun CustomSecurityScreen(platformContextProvider: PlatformContextProvider) {
+  var shouldAuthenticate by remember { mutableStateOf(false) }
+  var authStatus by remember { mutableStateOf("Tap to authenticate") }
+
+  Column {
+    Text(authStatus)
+    Button(onClick = {
+      authStatus = "Authenticating..."
+      shouldAuthenticate = true
+    }) {
+      Text("Authenticate")
+    }
+  }
+
+  if (shouldAuthenticate) {
+    BioKeyX.Authenticate(
+      platformContextProvider = platformContextProvider,
+      shouldCheckAvailability = true,
+      lockConfig = LockConfig(BiometricPromptConfig.default()),
+      uiTextConfig = BiometricUiTextConfig.default(),
+      onAuthSuccess = {
+        authStatus = "Authentication Successful"
+        shouldAuthenticate = false
+      },
+      onNoEnrollment = {
+        authStatus = "No biometrics enrolled"
+        shouldAuthenticate = false
+      },
+      onFallback = {
+        authStatus = "Fallback requested"
+        shouldAuthenticate = false
+      },
+      onAuthFailure = { error ->
+        authStatus = "Authentication Failed: $error"
+        shouldAuthenticate = false
+      }
+    )
+  }
+}
 ```
 
 ### Android App (Jetpack Compose)

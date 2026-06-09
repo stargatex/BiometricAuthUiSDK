@@ -1,19 +1,27 @@
+public final class com/stargatex/mobile/lib/pinauth/ComposableSingletons$PinKeyXSDKKt {
+	public static final field INSTANCE Lcom/stargatex/mobile/lib/pinauth/ComposableSingletons$PinKeyXSDKKt;
+	public fun <init> ()V
+	public final fun getLambda$-1824360817$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$-1827843388$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
+	public final fun getLambda$1791881526$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
+}
+
 public final class com/stargatex/mobile/lib/pinauth/PINKeyX : com/stargatex/mobile/lib/pinauth/PINKeyXFacade {
 	public static final field $stable I
 	public static final field INSTANCE Lcom/stargatex/mobile/lib/pinauth/PINKeyX;
-	public fun Compose (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lcom/stargatex/mobile/lib/pinauth/domain/model/PinMode;ZLcom/stargatex/mobile/lib/pinauth/domain/model/LockConfig;Lcom/stargatex/mobile/lib/pinauth/ui/model/config/PinUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public fun Compose (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lcom/stargatex/mobile/lib/pinauth/domain/model/PinMode;ZLcom/stargatex/mobile/lib/pinauth/domain/model/LockConfig;Lcom/stargatex/mobile/lib/pinauth/ui/model/config/PinUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)V
 	public fun clearStore (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;)V
 	public fun isPinSet (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class com/stargatex/mobile/lib/pinauth/PINKeyXFacade {
-	public abstract fun Compose (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lcom/stargatex/mobile/lib/pinauth/domain/model/PinMode;ZLcom/stargatex/mobile/lib/pinauth/domain/model/LockConfig;Lcom/stargatex/mobile/lib/pinauth/ui/model/config/PinUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun Compose (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lcom/stargatex/mobile/lib/pinauth/domain/model/PinMode;ZLcom/stargatex/mobile/lib/pinauth/domain/model/LockConfig;Lcom/stargatex/mobile/lib/pinauth/ui/model/config/PinUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun clearStore (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;)V
 	public abstract fun isPinSet (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class com/stargatex/mobile/lib/pinauth/PINKeyXFacade$ComposeDefaultImpls {
-	public static final fun Compose$default (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lcom/stargatex/mobile/lib/pinauth/domain/model/PinMode;ZLcom/stargatex/mobile/lib/pinauth/domain/model/LockConfig;Lcom/stargatex/mobile/lib/pinauth/ui/model/config/PinUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lcom/stargatex/mobile/lib/pinauth/PINKeyXFacade;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Compose$default (Lcom/stargatex/mobile/lib/pinauth/di/PlatformContextProvider;Lcom/stargatex/mobile/lib/pinauth/domain/model/PinMode;ZLcom/stargatex/mobile/lib/pinauth/domain/model/LockConfig;Lcom/stargatex/mobile/lib/pinauth/ui/model/config/PinUiTextConfig;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Lcom/stargatex/mobile/lib/pinauth/PINKeyXFacade;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class com/stargatex/mobile/lib/pinauth/di/AndroidPlatformContextProvider : com/stargatex/mobile/lib/pinauth/di/PlatformContextProvider {
@@ -72,6 +80,12 @@ public final class com/stargatex/mobile/lib/pinauth/domain/model/PinPromptConfig
 
 public final class com/stargatex/mobile/lib/pinauth/domain/model/PinPromptConfig$Companion {
 	public final fun default (Landroidx/compose/runtime/Composer;I)Lcom/stargatex/mobile/lib/pinauth/domain/model/PinPromptConfig;
+}
+
+public final class com/stargatex/mobile/lib/pinauth/ui/ComposableSingletons$PINVerifyScreenKt {
+	public static final field INSTANCE Lcom/stargatex/mobile/lib/pinauth/ui/ComposableSingletons$PINVerifyScreenKt;
+	public fun <init> ()V
+	public final fun getLambda$-630412673$pinLockUISdk_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class com/stargatex/mobile/lib/pinauth/ui/component/ComposableSingletons$NumericKeyPadKt {

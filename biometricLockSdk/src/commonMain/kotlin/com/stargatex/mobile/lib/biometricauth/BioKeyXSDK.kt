@@ -2,14 +2,18 @@ package com.stargatex.mobile.lib.biometricauth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.stargatex.mobile.lib.biometricauth.Base
 import com.stargatex.mobile.lib.biometricauth.di.BiometricAuthLibDI
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPromptConfig
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.LockConfig
+import com.stargatex.mobile.lib.biometricauth.ui.biometricVerifyEffects
 import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyScreen
 import com.stargatex.mobile.lib.biometricauth.ui.BiometricVerifyViewModel
 import com.stargatex.mobile.lib.biometricauth.ui.model.config.BiometricUiTextConfig
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.core.annotation.KoinExperimentalAPI
 
 
@@ -41,6 +45,26 @@ public interface BioKeyXFacade {
      */
     @Composable
     public fun Compose(
+        platformContextProvider: PlatformContextProvider,
+        shouldCheckAvailability: Boolean = true,
+        lockConfig: LockConfig = LockConfig(
+            BiometricPromptConfig.default()
+        ),
+        uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig.default(),
+        onAuthSuccess: () -> Unit = {},
+        onNoEnrollment: () -> Unit = {},
+        onFallback: () -> Unit = {},
+        onAuthFailure: (String) -> Unit = {}
+    )
+
+    /**
+     * Composable function that executes biometric authentication without rendering SDK UI.
+     *
+     * Use this when you want to drive authentication from your own screen while still using
+     * the SDK biometric flow and callbacks.
+     */
+    @Composable
+    public fun Authenticate(
         platformContextProvider: PlatformContextProvider,
         shouldCheckAvailability: Boolean = true,
         lockConfig: LockConfig = LockConfig(
@@ -104,6 +128,27 @@ public object BioKeyX : BioKeyXFacade {
         onFallback,
         onAuthFailure
     )
+
+    @Composable
+    override fun Authenticate(
+        platformContextProvider: PlatformContextProvider,
+        shouldCheckAvailability: Boolean,
+        lockConfig: LockConfig,
+        uiTextConfig: BiometricUiTextConfig,
+        onAuthSuccess: () -> Unit,
+        onNoEnrollment: () -> Unit,
+        onFallback: () -> Unit,
+        onAuthFailure: (String) -> Unit
+    ): Unit = appHeadless(
+        platformContextProvider = platformContextProvider,
+        shouldCheckAvailability = shouldCheckAvailability,
+        lockConfig = lockConfig,
+        uiTextConfig = uiTextConfig,
+        onAuthSuccess = onAuthSuccess,
+        onNoEnrollment = onNoEnrollment,
+        onFallback = onFallback,
+        onAuthFailure = onAuthFailure
+    )
 }
 
 
@@ -124,7 +169,6 @@ public object BioKeyX : BioKeyXFacade {
  */
 @OptIn(KoinExperimentalAPI::class)
 @Composable
-@Preview
 internal fun App(
     platformContextProvider: PlatformContextProvider,
     shouldCheckAvailability: Boolean = true,
@@ -154,6 +198,45 @@ internal fun App(
         }
     }
 }
+
+@OptIn(KoinExperimentalAPI::class)
+@Composable
+internal fun appHeadless(
+    platformContextProvider: PlatformContextProvider,
+    shouldCheckAvailability: Boolean = true,
+    lockConfig: LockConfig,
+    uiTextConfig: BiometricUiTextConfig = BiometricUiTextConfig.default(),
+    onAuthSuccess: () -> Unit = {},
+    onNoEnrollment: () -> Unit = {},
+    onFallback: () -> Unit = {},
+    onAuthFailure: (String) -> Unit = {}
+) {
+    BiometricAuthLibDI.start(platformContextProvider)
+
+    val verifyViewModel: BiometricVerifyViewModel = BiometricAuthLibDI.getKoin().get()
+    val availability by verifyViewModel.availability.collectAsState()
+    val authenticationResult by verifyViewModel.authResult.collectAsState()
+
+    biometricVerifyEffects(
+        verifyViewModel = verifyViewModel,
+        shouldCheckAvailability = shouldCheckAvailability,
+        lockConfig = lockConfig,
+        availability = availability,
+        authenticationResult = authenticationResult,
+        authFailedMessage = uiTextConfig.authFailed,
+        onAuthSuccess = onAuthSuccess,
+        onNoEnrollment = onNoEnrollment,
+        onFallback = onFallback,
+        onAuthFailure = onAuthFailure
+    )
+
+    DisposableEffect(Unit) {
+        onDispose {
+            BiometricAuthLibDI.stop()
+        }
+    }
+}
+
 
 
 /**

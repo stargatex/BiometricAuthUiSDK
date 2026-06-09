@@ -70,6 +70,9 @@ internal fun PinVerifyScreen(
         if (newPin.length <= 4) {
             pin = newPin
         }
+    }
+
+    LaunchedEffect(pin) {
         if (pin.length == 4) {
             verifyViewModel.afterPinEntered(pin)
             pin = ""
