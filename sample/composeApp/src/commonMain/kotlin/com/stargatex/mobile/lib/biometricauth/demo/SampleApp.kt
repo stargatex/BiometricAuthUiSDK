@@ -239,6 +239,12 @@ private fun LayeredBiometricPinScreen(
             onAuthFailure = onAuthFailure
         )
 
+        Button(onClick = {
+            shouldAuthenticate = true
+        }) {
+            Text("Authenticate with Biometrics")
+        }
+
         if (shouldAuthenticate) {
             BioKeyX.Authenticate(
                 platformContextProvider = platformContextProvider,

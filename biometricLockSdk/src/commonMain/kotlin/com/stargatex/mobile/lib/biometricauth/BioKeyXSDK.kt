@@ -2,10 +2,9 @@ package com.stargatex.mobile.lib.biometricauth
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.stargatex.mobile.lib.biometricauth.Base
+import androidx.compose.runtime.remember
 import com.stargatex.mobile.lib.biometricauth.di.BiometricAuthLibDI
 import com.stargatex.mobile.lib.biometricauth.di.PlatformContextProvider
 import com.stargatex.mobile.lib.biometricauth.domain.biometric.model.BiometricPromptConfig
@@ -139,7 +138,7 @@ public object BioKeyX : BioKeyXFacade {
         onNoEnrollment: () -> Unit,
         onFallback: () -> Unit,
         onAuthFailure: (String) -> Unit
-    ): Unit = appHeadless(
+    ): Unit = AppHeadless(
         platformContextProvider = platformContextProvider,
         shouldCheckAvailability = shouldCheckAvailability,
         lockConfig = lockConfig,
@@ -152,11 +151,39 @@ public object BioKeyX : BioKeyXFacade {
 }
 
 
+
+/**
+ * Initializes the biometric DI scope and returns the [BiometricVerifyViewModel], scoped to
+ * [platformContextProvider]. The DI container is started exactly once per unique context instance
+ * (guarded by [remember]) and torn down via [DisposableEffect] when the composable leaves the tree.
+ *
+ * Extracting this into a dedicated function avoids duplicating the lifecycle boilerplate across
+ * [App] and [AppHeadless].
+ */
+@OptIn(KoinExperimentalAPI::class)
+@Composable
+private fun rememberBiometricViewModel(
+    platformContextProvider: PlatformContextProvider
+): BiometricVerifyViewModel {
+    val verifyViewModel: BiometricVerifyViewModel = remember(platformContextProvider) {
+        BiometricAuthLibDI.start(platformContextProvider)
+        BiometricAuthLibDI.getKoin().get()
+    }
+
+    // Keyed on platformContextProvider so the scope is torn down and recreated if context changes.
+    DisposableEffect(platformContextProvider) {
+        onDispose {
+            BiometricAuthLibDI.stop()
+        }
+    }
+
+    return verifyViewModel
+}
+
 /**
  * Internal Composable function that sets up the Biometric Authentication library.
- * It initializes the dependency injection framework and renders the [Base] Composable
- * which contains the UI for biometric verification.
- * It also handles the disposal of resources when the Composable is removed from the composition.
+ * It initializes the dependency injection framework and renders the [BiometricVerifyScreen].
+ * Resources are disposed when the Composable is removed from the composition.
  *
  * @param platformContextProvider Provides platform-specific context, essential for the library to function.
  * @param shouldCheckAvailability A boolean flag indicating whether to check for biometric availability before prompting. Defaults to `true`.
@@ -167,7 +194,6 @@ public object BioKeyX : BioKeyXFacade {
  * @param onFallback A lambda function to be executed if the user chooses to use a fallback authentication method.
  * @param onAuthFailure A lambda function to be executed when biometric authentication fails, providing an error message.
  */
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 internal fun App(
     platformContextProvider: PlatformContextProvider,
@@ -179,10 +205,10 @@ internal fun App(
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
-    BiometricAuthLibDI.start(platformContextProvider)
+    val verifyViewModel = rememberBiometricViewModel(platformContextProvider)
 
-    Base(
-        verifyViewModel = BiometricAuthLibDI.getKoin().get(),
+    BiometricVerifyScreen(
+        verifyViewModel = verifyViewModel,
         shouldCheckAvailability = shouldCheckAvailability,
         lockConfig = lockConfig,
         uiTextConfig = uiTextConfig,
@@ -191,17 +217,24 @@ internal fun App(
         onFallback = onFallback,
         onAuthFailure = onAuthFailure
     )
-
-    DisposableEffect(Unit) {
-        onDispose {
-            BiometricAuthLibDI.stop()
-        }
-    }
 }
 
-@OptIn(KoinExperimentalAPI::class)
+/**
+ * Headless variant of [App] — runs the full biometric authentication flow without
+ * rendering any SDK-owned UI. Use this when you want to drive authentication from your
+ * own screen while still using the SDK biometric flow and callbacks.
+ *
+ * @param platformContextProvider Provides platform-specific context, essential for the library to function.
+ * @param shouldCheckAvailability A boolean flag indicating whether to check for biometric availability before prompting. Defaults to `true`.
+ * @param lockConfig Configuration for the biometric lock, including prompt details.
+ * @param uiTextConfig Configuration for the UI text elements displayed during the biometric authentication process.
+ * @param onAuthSuccess A lambda function to be executed when biometric authentication is successful.
+ * @param onNoEnrollment A lambda function to be executed if no biometrics are enrolled on the device.
+ * @param onFallback A lambda function to be executed if the user chooses to use a fallback authentication method.
+ * @param onAuthFailure A lambda function to be executed when biometric authentication fails, providing an error message.
+ */
 @Composable
-internal fun appHeadless(
+internal fun AppHeadless(
     platformContextProvider: PlatformContextProvider,
     shouldCheckAvailability: Boolean = true,
     lockConfig: LockConfig,
@@ -211,9 +244,8 @@ internal fun appHeadless(
     onFallback: () -> Unit = {},
     onAuthFailure: (String) -> Unit = {}
 ) {
-    BiometricAuthLibDI.start(platformContextProvider)
+    val verifyViewModel = rememberBiometricViewModel(platformContextProvider)
 
-    val verifyViewModel: BiometricVerifyViewModel = BiometricAuthLibDI.getKoin().get()
     val availability by verifyViewModel.availability.collectAsState()
     val authenticationResult by verifyViewModel.authResult.collectAsState()
 
@@ -224,50 +256,6 @@ internal fun appHeadless(
         availability = availability,
         authenticationResult = authenticationResult,
         authFailedMessage = uiTextConfig.authFailed,
-        onAuthSuccess = onAuthSuccess,
-        onNoEnrollment = onNoEnrollment,
-        onFallback = onFallback,
-        onAuthFailure = onAuthFailure
-    )
-
-    DisposableEffect(Unit) {
-        onDispose {
-            BiometricAuthLibDI.stop()
-        }
-    }
-}
-
-
-
-/**
- * Composable function that serves as the base for the biometric authentication UI.
- * It wraps the [BiometricVerifyScreen] and provides it with the necessary dependencies and configurations.
- *
- * @param verifyViewModel The view model responsible for handling biometric verification logic.
- * @param shouldCheckAvailability A boolean flag indicating whether to check for biometric availability before attempting authentication. Defaults to `true`.
- * @param lockConfig The configuration for the biometric prompt, such as title, subtitle, and description.
- * @param uiTextConfig The configuration for UI text elements, such as button labels and messages.
- * @param onAuthSuccess A callback function to be invoked when biometric authentication is successful.
- * @param onNoEnrollment A callback function to be invoked when no biometric credentials are enrolled on the device.
- * @param onFallback A callback function to be invoked when the user opts for a fallback authentication method.
- * @param onAuthFailure A callback function to be invoked when biometric authentication fails, providing an error message.
- */
-@Composable
-private fun Base(
-    verifyViewModel: BiometricVerifyViewModel,
-    shouldCheckAvailability: Boolean = true,
-    lockConfig: LockConfig,
-    uiTextConfig: BiometricUiTextConfig,
-    onAuthSuccess: () -> Unit = {},
-    onNoEnrollment: () -> Unit = {},
-    onFallback: () -> Unit = {},
-    onAuthFailure: (String) -> Unit = {}
-) {
-    BiometricVerifyScreen(
-        verifyViewModel = verifyViewModel,
-        shouldCheckAvailability = shouldCheckAvailability,
-        lockConfig = lockConfig,
-        uiTextConfig = uiTextConfig,
         onAuthSuccess = onAuthSuccess,
         onNoEnrollment = onNoEnrollment,
         onFallback = onFallback,
