@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.2.1] - 2026-06-09
+### Added
+- Added `BioKeyX.Authenticate(...)` for headless biometric authentication flows without rendering the SDK biometric screen.
+- Added `additionalOptions` slot to `PINKeyX.Compose(...)` to support custom actions below the PIN keypad.
+
+### Changed
+- Updated biometric verification flow and sample app to support developer-owned authentication screens.
+- Expanded `README.md` with usage examples for headless biometric authentication and custom PIN action options.
+
 ## [v1.2.0] - 2026-06-05
 ### Added
 - Added `isPinSet` API to check whether a PIN is already configured.
