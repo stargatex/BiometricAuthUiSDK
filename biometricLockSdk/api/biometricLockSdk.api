@@ -17,18 +17,18 @@ public final class com/stargatex/mobile/lib/biometricauth/BioKeyXFacade$ComposeD
 
 public final class com/stargatex/mobile/lib/biometricauth/di/AndroidPlatformContextProvider : com/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider {
 	public static final field $stable I
-	public fun <init> (Landroidx/appcompat/app/AppCompatActivity;)V
-	public fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
+	public fun <init> (Landroidx/fragment/app/FragmentActivity;)V
+	public fun getPlatformContext ()Landroidx/fragment/app/FragmentActivity;
 }
 
 public final class com/stargatex/mobile/lib/biometricauth/di/FakeAndroidPlatformContextProvider : com/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
+	public fun getPlatformContext ()Landroidx/fragment/app/FragmentActivity;
 }
 
 public abstract interface class com/stargatex/mobile/lib/biometricauth/di/PlatformContextProvider {
-	public abstract fun getPlatformContext ()Landroidx/appcompat/app/AppCompatActivity;
+	public abstract fun getPlatformContext ()Landroidx/fragment/app/FragmentActivity;
 }
 
 public final class com/stargatex/mobile/lib/biometricauth/domain/biometric/model/BiometricPromptConfig {

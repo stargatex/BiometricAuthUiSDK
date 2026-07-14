@@ -1,24 +1,25 @@
 package com.stargatex.mobile.lib.pinauth.di
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import org.jetbrains.annotations.VisibleForTesting
 
-internal actual typealias PlatformContext = AppCompatActivity
+internal actual typealias PlatformContext = FragmentActivity
 
 /**
  * Android-specific implementation of [PlatformContextProvider].
  *
- * This class holds a reference to the current Android [AppCompatActivity]
+ * This class holds a reference to the current Android [FragmentActivity]
  * to provide it as the [PlatformContext].
  *
- * @property activity The [AppCompatActivity] instance to be provided as the platform context.
+ * @property activity The [FragmentActivity] instance to be provided as the platform context.
  */
 public class AndroidPlatformContextProvider(private val activity: PlatformContext) :
     PlatformContextProvider {
     /**
      * Retrieves the platform-specific context.
      *
-     * On Android, this will be the current [AppCompatActivity].
+     * On Android, this will be the current [FragmentActivity].
      *
      * @return The platform-specific context.
      */
@@ -28,7 +29,7 @@ public class AndroidPlatformContextProvider(private val activity: PlatformContex
 /**
  * A fake implementation of [PlatformContextProvider] for testing purposes on Android.
  *
- * This class provides a mock [PlatformContext] (which is an [AppCompatActivity])
+ * This class provides a mock [PlatformContext] (which is a [FragmentActivity])
  * without requiring a real Android environment.
  */
 @VisibleForTesting
@@ -38,9 +39,9 @@ public class FakeAndroidPlatformContextProvider :
      * Returns a fake platform context.
      *
      * This method is intended for testing purposes only and should not be used in production code.
-     * It creates and returns a new instance of [AppCompatActivity] each time it is called.
+     * It creates and returns a new instance of [FragmentActivity] each time it is called.
      *
-     * @return A new instance of [AppCompatActivity].
+     * @return A new instance of [FragmentActivity].
      */
-    override fun getPlatformContext(): PlatformContext = AppCompatActivity()
+    override fun getPlatformContext(): PlatformContext = FragmentActivity()
 }

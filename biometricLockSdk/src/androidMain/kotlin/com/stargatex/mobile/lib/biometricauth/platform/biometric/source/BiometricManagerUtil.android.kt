@@ -1,11 +1,11 @@
 package com.stargatex.mobile.lib.biometricauth.platform.biometric.source
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.BiometricAuthResultDto
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.BiometricAvailabilityResultDto
 import com.stargatex.mobile.lib.biometricauth.platform.biometric.model.LockConfigDto
@@ -13,7 +13,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 
-internal actual class BiometricManagerUtil(private val activity: AppCompatActivity) {
+internal actual class BiometricManagerUtil(private val activity: FragmentActivity) {
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private val executor = ContextCompat.getMainExecutor(activity)
 
