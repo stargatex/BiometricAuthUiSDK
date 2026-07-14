@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-15]
 
     steps:
       - name: Checkout code
@@ -77,7 +77,7 @@ jobs:
 
   build:
     name: Build All Targets
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       - name: Checkout code

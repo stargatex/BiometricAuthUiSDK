@@ -22,7 +22,7 @@ env:
 jobs:
   publish:
     name: Publish Snapshot to SonarType Central
-    runs-on: macos-latest
+    runs-on: macos-15
     environment: publish
     env:
       ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
