@@ -17,12 +17,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.fragment.app.FragmentActivity
 import com.stargatex.mobile.lib.biometricauth.di.AndroidPlatformContextProvider as BioAndroidPlatformContextProvider
 import com.stargatex.mobile.lib.biometricauth.di.FakeAndroidPlatformContextProvider as FakeBioAndroidPlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.di.AndroidPlatformContextProvider as PinAndroidPlatformContextProvider
 import com.stargatex.mobile.lib.pinauth.di.FakeAndroidPlatformContextProvider as FakePinAndroidPlatformContextProvider
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity() {
 
     private val bioPlatformContextProvider = BioAndroidPlatformContextProvider(this)
     private val pinPlatformContextProvider = PinAndroidPlatformContextProvider(this)
