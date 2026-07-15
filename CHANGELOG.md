@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.3.0] - 2026-07-14
+### Changed
+- Improved compatibility (Android)
+
 ## [v1.3.0] - 2026-06-09
 ### Changed
 - Refactored biometric and PIN authentication initialization for improved lifecycle management.
